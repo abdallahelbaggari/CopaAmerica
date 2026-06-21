@@ -249,6 +249,44 @@ input{font-family:inherit}
 /* ── LEGAL PANEL ── */
 #legal-panel{display:none;position:fixed;inset:0;background:var(--bg1);
   z-index:200;overflow-y:auto}
+
+/* ── IMAGES ── */
+.img-grid{columns:2;gap:.3rem;padding:.3rem}
+.img-post{break-inside:avoid;margin-bottom:.3rem;border-radius:10px;
+  overflow:hidden;background:var(--bg2);border:1px solid var(--bd)}
+.img-post-hdr{display:flex;align-items:center;gap:.35rem;padding:.4rem .5rem}
+.img-post-avatar{width:24px;height:24px;border-radius:50%;background:var(--gold);
+  color:#000;font-size:.45rem;font-weight:900;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
+.img-post-source{font-size:.48rem;color:var(--t1);font-weight:700}
+.img-post-time{font-size:.4rem;color:var(--t3)}
+.img-post-img{width:100%;display:block;background:var(--bg3);
+  min-height:80px;object-fit:cover;cursor:pointer}
+.img-post-caption{font-size:.42rem;color:var(--t3);padding:.25rem .5rem .35rem;
+  line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden}
+.img-post-actions{display:flex;border-top:1px solid var(--bd)}
+.img-act{flex:1;font-size:.44rem;color:var(--t3);padding:.3rem;
+  text-align:center;cursor:pointer;transition:all .15s;font-family:var(--dm)}
+.img-act:active{background:var(--bg3);color:var(--gold)}
+.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);
+  z-index:150;flex-direction:column;align-items:center;justify-content:center}
+.img-lightbox.open{display:flex}
+.img-lb-img{max-width:100%;max-height:75vh;object-fit:contain;border-radius:8px}
+.img-lb-info{padding:.6rem 1rem;text-align:center}
+.img-lb-caption{font-size:.58rem;color:var(--t1);margin-bottom:.2rem}
+.img-lb-meta{font-size:.44rem;color:var(--t3)}
+.img-catbar{display:flex;gap:.3rem;overflow-x:auto;padding:.35rem .5rem;
+  scrollbar-width:none;border-bottom:1px solid var(--bd);flex-shrink:0}
+.img-catbar::-webkit-scrollbar{display:none}
+.img-catbtn{flex-shrink:0;font-family:var(--dm);font-size:.56rem;font-weight:700;
+  padding:.3rem .65rem;background:var(--bg3);border:1px solid var(--bd);
+  border-radius:99px;color:var(--t3);cursor:pointer;transition:all .15s}
+.img-catbtn.on{background:var(--gold);border-color:var(--gold);color:#000;font-weight:900}
+.img-catbtn:active{transform:scale(.93)}
+.img-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:calc(var(--nav-h)+1rem)}
+.img-feed::-webkit-scrollbar{display:none}
 </style>
 </head>
 <body>
@@ -505,6 +543,38 @@ input{font-family:inherit}
       </div><!-- /scr-scroll -->
     </section>
 
+
+    <!-- 📸 IMAGES -->
+    <section class="scr" id="s-images">
+      <div class="scr-hdr" style="flex-shrink:0">
+        <div><div class="scr-hdr-title">&#x1F4F8; Images</div>
+          <div class="scr-hdr-sub">Copa Am&eacute;rica &middot; Gallery</div></div>
+        <button onclick="imgRefresh()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
+      </div>
+      <div class="img-catbar">
+        <button class="img-catbtn on" onclick="imgSetCat('all',this)">&#x1F30D; All</button>
+        <button class="img-catbtn" onclick="imgSetCat('players',this)">&#x1F3C3; Players</button>
+        <button class="img-catbtn" onclick="imgSetCat('stadiums',this)">&#x1F3DF; Stadiums</button>
+        <button class="img-catbtn" onclick="imgSetCat('fans',this)">&#x1F3F3; Fans</button>
+        <button class="img-catbtn" onclick="imgSetCat('trophies',this)">&#x1F3C6; Trophies</button>
+      </div>
+      <div class="img-feed" id="img-grid-wrap">
+        <div class="img-grid" id="img-grid"></div>
+        <div id="img-sentinel" style="height:1px"></div>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="img-lightbox" id="img-lightbox" onclick="imgCloseLightbox()">
+      <button onclick="imgCloseLightbox()" style="position:absolute;top:.75rem;right:.75rem;
+        color:rgba(255,255,255,.6);font-size:1.4rem;z-index:5">&#x2715;</button>
+      <img id="img-lb-img" src="" alt="" class="img-lb-img">
+      <div class="img-lb-info">
+        <div id="img-lb-caption" class="img-lb-caption"></div>
+        <div id="img-lb-meta" class="img-lb-meta"></div>
+      </div>
+    </div>
+
   </div><!-- /main -->
 
   <!-- Bottom Nav -->
@@ -528,6 +598,10 @@ input{font-family:inherit}
     <button class="nav-btn" onclick="goS('news',this)">
       <span class="nav-icon">&#x1F4F0;</span>
       <span class="nav-lbl">News</span>
+    </button>
+    <button class="nav-btn" onclick="goS('images',this)">
+      <span class="nav-icon">&#x1F4F8;</span>
+      <span class="nav-lbl">Images</span>
     </button>
     <button class="nav-btn" onclick="goS('more',this)">
       <span class="nav-icon">&#x26A1;</span>
@@ -553,6 +627,8 @@ input{font-family:inherit}
 <div id="toast"></div>
 
 <script>
+
+
 /* ── STATE (exact copy from Copa) ── */
 var piUser     = null;
 var isCopaPass = localStorage.getItem('ca_pass') === '1';
@@ -623,16 +699,30 @@ function fmtTime(d) {
 /* ── NAVIGATION ── */
 function goS(id, btn) {
   document.querySelectorAll('.scr').forEach(function(s){ s.classList.remove('on'); });
-  var el=document.getElementById('s-'+id);
+  var el = document.getElementById('s-'+id);
   if (el) el.classList.add('on');
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
   if (btn) btn.classList.add('on');
-  if (id==='standings' && !document.getElementById('standings-body').children.length) standingsLoad();
-  if (id==='scorers'   && !document.getElementById('scorers-body').children.length)   scorersLoad();
-  if (id==='predict'   && !document.getElementById('predict-body').children.length)    predictLoad();
-  if (id==='news') {
-    var nb=document.getElementById('news-body');
-    if (!nb||!nb.innerHTML.trim()) newsLoad();
+  /* Lazy-load each section on first visit */
+  if (id === 'standings') {
+    var sb = document.getElementById('standings-body');
+    if (!sb || !sb.innerHTML.trim() || sb.innerHTML.includes('spin')) standingsLoad();
+  }
+  if (id === 'scorers') {
+    var sc = document.getElementById('scorers-body');
+    if (!sc || !sc.innerHTML.trim() || sc.innerHTML.includes('spin')) scorersLoad();
+  }
+  if (id === 'predict') {
+    var pb = document.getElementById('predict-body');
+    if (!pb || !pb.innerHTML.trim() || pb.innerHTML.includes('spin')) predictLoad();
+  }
+  if (id === 'news') {
+    var nb = document.getElementById('news-body');
+    if (!nb || !nb.innerHTML.trim()) { _news.page=1; _news.hasMore=true; _news.loading=false; _news.obs=null; newsLoad(); }
+  }
+  if (id === 'images') {
+    var ig = document.getElementById('img-grid');
+    if (!ig || !ig.innerHTML.trim()) { IMG.page=1; IMG.hasMore=true; IMG.loading=false; IMG.obs=null; imgLoad(); }
   }
 }
 
@@ -916,11 +1006,13 @@ function newsAttachObs() {
   var nb=document.getElementById('news-body');
   if (!nb) return;
   var old=document.getElementById('news-sentinel');
-  if (old) old.remove();
-  var s=document.createElement('div'); s.id='news-sentinel'; s.style.height='1px'; nb.appendChild(s);
+  if (old) old.parentNode && old.parentNode.removeChild(old);
+  var s=document.createElement('div'); s.id='news-sentinel';
+  s.style.cssText='height:1px;width:100%;display:block';
+  nb.appendChild(s);
   _news.obs=new IntersectionObserver(function(entries){
     if (entries[0].isIntersecting&&!_news.loading&&_news.hasMore) newsLoad();
-  },{root:nb.parentElement,rootMargin:'200px',threshold:0});
+  },{root:null,rootMargin:'400px',threshold:0});
   _news.obs.observe(s);
 }
 setInterval(function(){
@@ -1133,6 +1225,139 @@ window.addEventListener('load', function() {
   renderPassStatus();
   piLogin();
 });
+
+
+
+/* ── IMAGES ── */
+var IMG = { page:1, loading:false, hasMore:true, cat:'all', allImages:[], current:0, obs:null };
+var _lazyObs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if (e.isIntersecting && e.target.dataset.src) {
+      e.target.src = e.target.dataset.src;
+      delete e.target.dataset.src;
+      _lazyObs.unobserve(e.target);
+    }
+  });
+},{rootMargin:'200px'});
+
+function imgSetCat(cat, btn) {
+  IMG.cat=cat; IMG.page=1; IMG.hasMore=true; IMG.loading=false; IMG.allImages=[]; IMG.obs=null;
+  document.querySelectorAll('.img-catbtn').forEach(function(b){b.classList.remove('on');});
+  if (btn) btn.classList.add('on');
+  var grid=document.getElementById('img-grid');
+  if (grid) grid.innerHTML='';
+  imgLoad();
+}
+
+function imgRefresh() {
+  IMG.page=1; IMG.hasMore=true; IMG.loading=false; IMG.allImages=[]; IMG.obs=null;
+  var grid=document.getElementById('img-grid');
+  if (grid) grid.innerHTML='';
+  toast('Refreshing images...');
+  imgLoad();
+}
+
+function imgLoad() {
+  if (IMG.loading||!IMG.hasMore) return;
+  IMG.loading=true;
+  fetch('/images?category='+IMG.cat+'&page='+IMG.page)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      IMG.hasMore = !!(data.hasMore!==false && (data.images||[]).length>=3);
+      IMG.page++;
+      var images=data.images||[];
+      if (images.length) imgRender(images);
+      else if (IMG.page===2) {
+        var grid=document.getElementById('img-grid');
+        if (grid) grid.innerHTML='<div style="padding:2rem;text-align:center;font-size:.6rem;color:var(--t3)">No images found</div>';
+      }
+      imgAttachObs();
+    })
+    .catch(function(){
+      IMG.hasMore=false;
+      var grid=document.getElementById('img-grid');
+      if (grid&&!grid.innerHTML.trim()) grid.innerHTML='<div style="padding:2rem;text-align:center;font-size:.6rem;color:var(--t3)">Failed to load images</div>';
+    })
+    .finally(function(){IMG.loading=false;});
+}
+
+function imgAttachObs() {
+  if (IMG.obs) return;
+  var sentinel=document.getElementById('img-sentinel');
+  var feed=document.getElementById('img-grid-wrap');
+  if (!sentinel||!feed) return;
+  IMG.obs=new IntersectionObserver(function(entries){
+    if (entries[0].isIntersecting&&!IMG.loading&&IMG.hasMore) imgLoad();
+  },{root:null,rootMargin:'400px',threshold:0});
+  IMG.obs.observe(sentinel);
+}
+
+function imgRender(images) {
+  var grid=document.getElementById('img-grid');
+  if (!grid) return;
+  images.forEach(function(img){
+    IMG.allImages.push(img);
+    var idx=IMG.allImages.length-1;
+    var initials=(img.source||'CA').slice(0,2).toUpperCase();
+    var post=document.createElement('div'); post.className='img-post';
+    var hdr=document.createElement('div'); hdr.className='img-post-hdr';
+    hdr.innerHTML='<div class="img-post-avatar">'+escHtml(initials)+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div class="img-post-source">'+escHtml(img.source||'Football')+'</div>'
+      +'<div class="img-post-time">'+escHtml(img.license||'CC Licensed')+'</div>'
+      +'</div>';
+    var imgEl=document.createElement('img'); imgEl.className='img-post-img';
+    imgEl.setAttribute('data-src',img.thumb||img.url);
+    imgEl.alt=(img.caption||'').slice(0,60); imgEl.loading='lazy';
+    imgEl.onerror=function(){this.style.display='none';};
+    imgEl.onclick=(function(i){return function(){imgOpen(i);};})(idx);
+    _lazyObs.observe(imgEl);
+    var cap=img.caption?'<div class="img-post-caption">'+escHtml(img.caption.slice(0,100))+'</div>':'';
+    var acts=document.createElement('div'); acts.className='img-post-actions';
+    acts.innerHTML='<span class="img-act" onclick="imgOpen('+idx+')">&#x1F50D;</span>'
+      +'<span class="img-act" onclick="imgShare('+idx+')">&#x2B06;</span>'
+      +'<span class="img-act" onclick="imgDl('+idx+')">&#x2B07;</span>';
+    post.appendChild(hdr); post.appendChild(imgEl);
+    if (img.caption){var capEl=document.createElement('div');capEl.className='img-post-caption';capEl.textContent=img.caption.slice(0,100);post.appendChild(capEl);}
+    post.appendChild(acts); grid.appendChild(post);
+  });
+}
+
+function imgOpen(i) {
+  var img=IMG.allImages[i]; if (!img) return;
+  IMG.current=i;
+  var lb=document.getElementById('img-lightbox');
+  var lbi=document.getElementById('img-lb-img');
+  if (!lb||!lbi) return;
+  lbi.src=img.fullUrl||img.url; lbi.alt=img.caption||'';
+  document.getElementById('img-lb-caption').textContent=img.caption||'';
+  document.getElementById('img-lb-meta').textContent=(img.source||'')+(img.author?' · '+img.author:'');
+  lb.classList.add('open');
+}
+function imgCloseLightbox() {
+  var lb=document.getElementById('img-lightbox'); if (lb) lb.classList.remove('open');
+}
+function imgShare(i) {
+  var img=IMG.allImages[i]; if (!img) return;
+  if (navigator.share) navigator.share({title:img.caption||'CopaAmerica',url:img.url}).catch(function(){});
+  else if (navigator.clipboard) navigator.clipboard.writeText(img.url).then(function(){toast('Link copied!');});
+}
+function imgDl(i) {
+  var img=IMG.allImages[i]; if (!img) return;
+  var a=document.createElement('a'); a.href=img.fullUrl||img.url;
+  a.download='copa-'+Date.now()+'.jpg'; a.target='_blank';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+
+
+/* ── AUTO-REFRESH ── */
+setInterval(function(){
+  var active = document.querySelector('.scr.on');
+  if (!active) return;
+  if (active.id === 's-home')    homeLoad();
+  if (active.id === 's-news' && !_news.loading && _news.hasMore) newsLoad();
+}, 90000);
 
 </script>
 </body>
