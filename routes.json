@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "include": [
+    "/approve",
+    "/complete",
+    "/cancel-payment",
+    "/data",
+    "/news",
+    "/images",
+    "/privacy",
+    "/privacy.html",
+    "/terms",
+    "/terms.html"
+  ],
+  "exclude": []
+}
