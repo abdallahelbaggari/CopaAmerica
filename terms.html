@@ -1,6 +1,4 @@
-// CopaAmerica · /terms and /terms.html
-export async function onRequestGet() {
-  return new Response(`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
@@ -370,10 +368,3 @@ export async function onRequestGet() {
 
 </body>
 </html>
-`, {
-    headers: {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
-    },
-  });
-}
