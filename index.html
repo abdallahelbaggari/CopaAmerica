@@ -194,7 +194,7 @@ input{font-family:inherit}
 
 /* ── NEWS ── */
 .news-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:calc(var(--nav-h)+1rem)}
+  padding-bottom:calc(var(--nav-h)+2rem);display:flex;flex-direction:column}
 .news-feed::-webkit-scrollbar{display:none}
 .news-card2{background:var(--bg2);margin:.3rem 0;overflow:hidden;cursor:pointer;
   border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);
@@ -285,9 +285,10 @@ input{font-family:inherit}
 .img-catbtn.on{background:var(--gold);border-color:var(--gold);color:#000;font-weight:900}
 .img-catbtn:active{transform:scale(.93)}
 .img-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:calc(var(--nav-h)+1rem)}
+  padding-bottom:calc(var(--nav-h)+2rem)}
 .img-feed::-webkit-scrollbar{display:none}
 </style>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
 
@@ -627,6 +628,7 @@ input{font-family:inherit}
 <div id="toast"></div>
 
 <script>
+
 
 
 /* ── STATE (exact copy from Copa) ── */
@@ -969,7 +971,7 @@ function newsLoad() {
       var nb=document.getElementById('news-body');
       if (nb&&!nb.innerHTML.trim()) nb.innerHTML='<div class="loading-center">Failed to load news</div>';
     })
-    .finally(function(){_news.loading=false;});
+    .finally(function(){_news.loading=false; newsAttachObs();});
 }
 function renderNews(articles) {
   var el=document.getElementById('news-body');
@@ -1002,17 +1004,18 @@ function renderNews(articles) {
   });
 }
 function newsAttachObs() {
-  if (_news.obs) return;
-  var nb=document.getElementById('news-body');
+  var nb = document.getElementById('news-body');
   if (!nb) return;
-  var old=document.getElementById('news-sentinel');
-  if (old) old.parentNode && old.parentNode.removeChild(old);
-  var s=document.createElement('div'); s.id='news-sentinel';
-  s.style.cssText='height:1px;width:100%;display:block';
+  var old = nb.querySelector('#news-sentinel');
+  if (old) old.parentNode.removeChild(old);
+  var s = document.createElement('div');
+  s.id = 'news-sentinel';
+  s.style.cssText = 'height:2px;width:100%;display:block';
   nb.appendChild(s);
-  _news.obs=new IntersectionObserver(function(entries){
-    if (entries[0].isIntersecting&&!_news.loading&&_news.hasMore) newsLoad();
-  },{root:null,rootMargin:'400px',threshold:0});
+  if (_news.obs) { _news.obs.disconnect(); _news.obs = null; }
+  _news.obs = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !_news.loading && _news.hasMore) newsLoad();
+  }, { rootMargin: '500px', threshold: 0 });
   _news.obs.observe(s);
 }
 setInterval(function(){
@@ -1109,12 +1112,12 @@ function launchApp() {
     if (m) m.textContent = '@' + u;
   }
   if (localStorage.getItem('ca_pass') === '1') isCopaPass = true;
-  renderCopaPassStatus();
+  renderPassStatus();
   renderTxHistory();
   homeLoad();
   setInterval(function() {
     var a = document.querySelector('.scr.on');
-    if (a && a.id === 's-home') homeLoad(homeLeague);
+    if (a && a.id === 's-home') homeLoad();
   }, 60000);
   toast('Welcome ' + (piUser ? '@' + piUser.username : 'Pioneer') + '!');
 }
@@ -1150,7 +1153,7 @@ function buyCopaPass() {
           isCopaPass=true; localStorage.setItem('ca_pass','1');
           addTx('Copa Pass 1π txid:'+txid.slice(0,12)+'...');
           showPaymentStatus('success','Copa Pass activated!');
-          renderCopaPassStatus(); toast('Copa Pass activated!');
+          renderPassStatus(); toast('Copa Pass activated!');
         }).catch(function(err){ showPaymentStatus('failed','Error — try again'); if(btn){btn.textContent='Get Copa Pass — 1π';btn.disabled=false;} });
     },
     onCancel: function(){ if(btn){btn.textContent='Get Copa Pass — 1π';btn.disabled=false;} showPaymentStatus('cancelled'); toast('Cancelled'); },
@@ -1278,17 +1281,16 @@ function imgLoad() {
       var grid=document.getElementById('img-grid');
       if (grid&&!grid.innerHTML.trim()) grid.innerHTML='<div style="padding:2rem;text-align:center;font-size:.6rem;color:var(--t3)">Failed to load images</div>';
     })
-    .finally(function(){IMG.loading=false;});
+    .finally(function(){IMG.loading=false; imgAttachObs();});
 }
 
 function imgAttachObs() {
-  if (IMG.obs) return;
-  var sentinel=document.getElementById('img-sentinel');
-  var feed=document.getElementById('img-grid-wrap');
-  if (!sentinel||!feed) return;
-  IMG.obs=new IntersectionObserver(function(entries){
-    if (entries[0].isIntersecting&&!IMG.loading&&IMG.hasMore) imgLoad();
-  },{root:null,rootMargin:'400px',threshold:0});
+  var sentinel = document.getElementById('img-sentinel');
+  if (!sentinel) return;
+  if (IMG.obs) { IMG.obs.disconnect(); IMG.obs = null; }
+  IMG.obs = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !IMG.loading && IMG.hasMore) imgLoad();
+  }, { rootMargin: '500px', threshold: 0 });
   IMG.obs.observe(sentinel);
 }
 
@@ -1358,6 +1360,7 @@ setInterval(function(){
   if (active.id === 's-home')    homeLoad();
   if (active.id === 's-news' && !_news.loading && _news.hasMore) newsLoad();
 }, 90000);
+
 
 </script>
 </body>
