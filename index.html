@@ -287,6 +287,39 @@ input{font-family:inherit}
 .img-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding-bottom:calc(var(--nav-h)+2rem)}
 .img-feed::-webkit-scrollbar{display:none}
+
+/* ── SKELETON CARDS ── */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);
+  background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px}
+.skel-card{background:var(--bg2);border-radius:12px;margin:.2rem .5rem;
+  border:1px solid var(--bd);padding:.5rem .65rem;overflow:hidden}
+.skel-line{height:10px;margin:.35rem 0;border-radius:4px}
+.skel-line.short{width:40%}
+.skel-line.med{width:65%}
+.skel-line.full{width:90%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── SKELETON LOADING ── */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);
+  background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px}
+.skel-card{margin:.3rem .5rem;border-radius:12px;border:1px solid var(--bd);
+  overflow:hidden;padding:.6rem .75rem;background:var(--bg2)}
+.skel-row{height:12px;margin:.3rem 0;border-radius:6px}
+.skel-row.wide{width:75%}.skel-row.mid{width:50%}.skel-row.short{width:30%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.league-bar{display:flex;gap:.3rem;overflow-x:auto;padding:.35rem .5rem;
+  scrollbar-width:none;border-bottom:1px solid var(--bd);flex-shrink:0;
+  -webkit-overflow-scrolling:touch}
+.league-bar::-webkit-scrollbar{display:none}
+.league-btn{flex-shrink:0;font-family:var(--dm);font-size:.56rem;font-weight:700;
+  padding:.3rem .65rem;background:var(--bg3);border:1px solid var(--bd);
+  border-radius:99px;color:var(--t3);cursor:pointer;white-space:nowrap;
+  transition:all .18s;touch-action:manipulation}
+.league-btn.on{background:var(--gold);border-color:var(--gold);color:#000;font-weight:900}
+.league-btn:active{transform:scale(.92)}
+.mc-comp{font-family:var(--dm);font-size:.38rem;color:var(--t3);
+  padding:.05rem .65rem .2rem;letter-spacing:.03em}
 </style>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
@@ -319,13 +352,13 @@ input{font-family:inherit}
       <span id="signin-txt">Sign In with Pi</span>
     </button>
     <div id="lmsg"></div>
-    <div class="login-legal">Pi SDK Exclusive &middot; Mainnet &middot; sandbox:false</div>
+    <div class="login-legal">Pi SDK Exclusive &middot; Secure Authentication</div>
     <div class="login-links">
       <a href="/privacy">Privacy Policy</a>
       <span style="color:var(--t3)">&middot;</span>
       <a href="/terms">Terms of Service</a>
     </div>
-    <div class="login-copy">&copy; 2026 CopaAmerica &bull; Developed by Abdullahi Bashir Abubakar</div>
+    <div class="login-copy">&copy; 2026 CopaAmerica &bull; Built by Abdullahi Bashir Abubakar</div>
   </div>
 </div>
 
@@ -335,10 +368,10 @@ input{font-family:inherit}
   <!-- Header -->
   <div id="hdr">
     <div>
-      <div class="hdr-logo">Copa<span>America</span></div>
-      <div class="hdr-sub">&#x1F3C6; CONMEBOL &middot; 16 Nations &middot; Pi Network</div>
+      <div class="hdr-logo">Copa<span>America</span><sup style="font-size:.4rem;color:var(--gold);vertical-align:super">&trade;</sup></div>
+      <div class="hdr-sub">CONMEBOL &middot; Live Football Experience</div>
     </div>
-    <div id="user-chip"></div>
+    <div style="display:flex;align-items:center;gap:.4rem"><div style="font-family:var(--dm);font-size:.42rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:99px;padding:.12rem .45rem;color:var(--gold)">v1.0</div><div style="display:flex;align-items:center;gap:.4rem"><div style="font-family:var(--dm);font-size:.42rem;color:var(--t3);background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:.12rem .45rem">v1.0</div><div id="user-chip"></div></div></div>
   </div>
 
   <div id="main">
@@ -350,6 +383,21 @@ input{font-family:inherit}
           <div class="scr-hdr-sub">Copa Am&eacute;rica &middot; Live</div></div>
         <button onclick="homeLoad()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
       </div>
+            <div class="league-bar" id="league-bar">
+        <button class="league-btn on" onclick="setLeague('ALL',this)">All</button>
+        <button class="league-btn" onclick="setLeague('CA',this)">&#x1F3C6; Copa Am&eacute;rica</button>
+        <button class="league-btn" onclick="setLeague('LIB',this)">&#x1F30E; Libertadores</button>
+        <button class="league-btn" onclick="setLeague('SUD',this)">&#x26BD; Sudamericana</button>
+        <button class="league-btn" onclick="setLeague('WC',this)">&#x1F30D; World Cup</button>
+        <button class="league-btn" onclick="setLeague('PL',this)">&#x1F3F4; Premier</button>
+        <button class="league-btn" onclick="setLeague('CL',this)">&#x2B50; Champions</button>
+        <button class="league-btn" onclick="setLeague('PD',this)">La Liga</button>
+        <button class="league-btn" onclick="setLeague('SA',this)">Serie A</button>
+        <button class="league-btn" onclick="setLeague('BL1',this)">Bundesliga</button>
+        <button class="league-btn" onclick="setLeague('FL1',this)">Ligue 1</button>
+        <button class="league-btn" onclick="setLeague('BSA',this)">&#x1F1E7;&#x1F1F7; Brasileirao</button>
+      </div>
+      <div id="home-greeting"></div>
       <div class="scr-scroll" id="home-matches">
         <div class="loading-center"><div class="spin"></div></div>
       </div>
@@ -362,6 +410,16 @@ input{font-family:inherit}
           <div class="scr-hdr-sub">All Groups</div></div>
         <button onclick="standingsLoad()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
       </div>
+            <div class="league-bar" id="st-league-bar">
+        <button class="league-btn on" onclick="standingsLoad('CA',this)">&#x1F3C6; Copa Am&eacute;rica</button>
+        <button class="league-btn" onclick="standingsLoad('WC',this)">&#x1F30D; World Cup</button>
+        <button class="league-btn" onclick="standingsLoad('PL',this)">&#x1F3F4; Premier</button>
+        <button class="league-btn" onclick="standingsLoad('CL',this)">&#x2B50; Champions</button>
+        <button class="league-btn" onclick="standingsLoad('PD',this)">La Liga</button>
+        <button class="league-btn" onclick="standingsLoad('SA',this)">Serie A</button>
+        <button class="league-btn" onclick="standingsLoad('BL1',this)">Bundesliga</button>
+        <button class="league-btn" onclick="standingsLoad('BSA',this)">Brasileirao</button>
+      </div>
       <div class="scr-scroll" id="standings-body">
         <div class="loading-center"><div class="spin"></div></div>
       </div>
@@ -372,6 +430,16 @@ input{font-family:inherit}
       <div class="scr-hdr" style="flex-shrink:0">
         <div><div class="scr-hdr-title">&#x1F45F; Top Scorers</div>
           <div class="scr-hdr-sub">Copa Am&eacute;rica 2024</div></div>
+      </div>
+            <div class="league-bar" id="sc-league-bar">
+        <button class="league-btn on" onclick="scorersLoad('CA',this)">&#x1F3C6; Copa Am&eacute;rica</button>
+        <button class="league-btn" onclick="scorersLoad('WC',this)">&#x1F30D; World Cup</button>
+        <button class="league-btn" onclick="scorersLoad('PL',this)">&#x1F3F4; Premier</button>
+        <button class="league-btn" onclick="scorersLoad('CL',this)">&#x2B50; Champions</button>
+        <button class="league-btn" onclick="scorersLoad('PD',this)">La Liga</button>
+        <button class="league-btn" onclick="scorersLoad('SA',this)">Serie A</button>
+        <button class="league-btn" onclick="scorersLoad('BL1',this)">Bundesliga</button>
+        <button class="league-btn" onclick="scorersLoad('BSA',this)">Brasileirao</button>
       </div>
       <div class="scr-scroll" id="scorers-body">
         <div class="loading-center"><div class="spin"></div></div>
@@ -398,7 +466,9 @@ input{font-family:inherit}
         <button onclick="newsRefresh()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
       </div>
       <div class="nfbar">
-        <button class="nfbtn on" onclick="newsSetFilter('all',this)">&#x1F30D; All</button>
+        <button class="nfbtn on" onclick="newsSetFilter('all',this)">All</button>
+        <button class="nfbtn" onclick="newsSetFilter('copa-america',this)">&#x1F3C6; Copa Am</button>
+        <button class="nfbtn" onclick="newsSetFilter('libertadores',this)">Libertadores</button>
         <button class="nfbtn" onclick="newsSetFilter('results',this)">&#x26BD; Results</button>
         <button class="nfbtn" onclick="newsSetFilter('transfers',this)">&#x1F4B8; Transfers</button>
         <button class="nfbtn" onclick="newsSetFilter('injuries',this)">&#x1FA7A; Injuries</button>
@@ -520,9 +590,9 @@ input{font-family:inherit}
           <div style="font-family:var(--dm);font-size:.52rem;color:var(--t3);line-height:2">
             <div style="color:var(--t1);font-weight:700;font-size:.58rem;margin-bottom:.3rem">CopaAmerica &mdash; Pi Network</div>
             <div>&#x1F4E6; Version 1.0.0</div>
-            <div>&#x1F510; Pi SDK Exclusive</div>
+            <div>&#x1F510; Powered by Pi Network</div>
             <div>&#x1F48E; Pi Exclusive Transactions</div>
-            <div>&#x1F30D; Mainnet &middot; sandbox:false</div>
+            <div>&#x1F30D; Secure Authentication</div>
             <div style="margin-top:.3rem;color:var(--gold);font-weight:700">copa-america.pages.dev</div>
           </div>
           <div style="display:flex;gap:.75rem;justify-content:center;
@@ -537,7 +607,7 @@ input{font-family:inherit}
           </div>
           <div style="font-family:var(--dm);font-size:.5rem;color:var(--t3);
             text-align:center;padding:.1rem 0 .5rem">
-            &copy; 2026 CopaAmerica &bull; Developed by Abdullahi Bashir Abubakar
+            &copy; 2026 CopaAmerica &bull; Built by Abdullahi Bashir Abubakar
           </div>
         </div>
 
@@ -585,24 +655,24 @@ input{font-family:inherit}
       <span class="nav-lbl">Live</span>
     </button>
     <button class="nav-btn" onclick="goS('standings',this)">
-      <span class="nav-icon">&#x1F4CA;</span>
-      <span class="nav-lbl">Table</span>
+      <span class="nav-icon">&#x1F3C6;</span>
+      <span class="nav-lbl">Groups</span>
     </button>
     <button class="nav-btn" onclick="goS('scorers',this)">
       <span class="nav-icon">&#x1F45F;</span>
-      <span class="nav-lbl">Scorers</span>
+      <span class="nav-lbl">Goals</span>
     </button>
     <button class="nav-btn" onclick="goS('predict',this)">
       <span class="nav-icon">&#x1F9E0;</span>
-      <span class="nav-lbl">Predict</span>
+      <span class="nav-lbl">Pick</span>
     </button>
     <button class="nav-btn" onclick="goS('news',this)">
       <span class="nav-icon">&#x1F4F0;</span>
       <span class="nav-lbl">News</span>
     </button>
     <button class="nav-btn" onclick="goS('images',this)">
-      <span class="nav-icon">&#x1F4F8;</span>
-      <span class="nav-lbl">Images</span>
+      <span class="nav-icon">&#x1F4F7;</span>
+      <span class="nav-lbl">Media</span>
     </button>
     <button class="nav-btn" onclick="goS('more',this)">
       <span class="nav-icon">&#x26A1;</span>
@@ -628,6 +698,14 @@ input{font-family:inherit}
 <div id="toast"></div>
 
 <script>
+var _FD_API_KEY_HINT = 'Set FD_API_KEY in Cloudflare env vars';
+
+var _currentLeague = 'ALL';
+
+
+
+
+
 
 
 
@@ -720,7 +798,7 @@ function goS(id, btn) {
   }
   if (id === 'news') {
     var nb = document.getElementById('news-body');
-    if (!nb || !nb.innerHTML.trim()) { _news.page=1; _news.hasMore=true; _news.loading=false; _news.obs=null; newsLoad(); }
+    if (!nb || !nb.innerHTML.trim()) { _news.page=1; _news.hasMore = data.hasMore !== false; _news.loading=false; _news.obs=null; newsLoad(); }
   }
   if (id === 'images') {
     var ig = document.getElementById('img-grid');
@@ -729,11 +807,20 @@ function goS(id, btn) {
 }
 
 /* ── HOME / FIXTURES ── */
+function setLeague(league, btn) {
+  _currentLeague = league || 'ALL';
+  document.querySelectorAll('#league-bar .league-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  var sub = document.getElementById('home-sub');
+  if (sub) sub.textContent = league === 'ALL' ? 'All Competitions' : league;
+  homeLoad();
+}
+
 function homeLoad() {
   var el=document.getElementById('home-matches');
   if (!el) return;
   el.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
-  fetch('/data?type=fixtures')
+  fetch('/data?type=fixtures&league=' + (_currentLeague || 'ALL'))
     .then(function(r){return r.json();})
     .then(function(data){renderHome(data,el);})
     .catch(function(){
@@ -743,14 +830,59 @@ function homeLoad() {
 }
 
 function renderHome(data, el) {
+  /* ── Welcome dashboard card ── */
+  var u     = piUser ? '@'+piUser.username : 'Pioneer';
+  var pts   = caScore ? caScore.points : 0;
+  var streak= caScore ? caScore.streak : 0;
+  var today = (data.groups && data.groups.today) ? data.groups.today.length : 0;
+  var live  = (data.groups && data.groups.live)  ? data.groups.live.length  : 0;
+  var passTag = isCopaPass
+    ? '<span style="background:var(--gold);color:#000;font-size:.42rem;font-weight:900;'
+      +'padding:.1rem .4rem;border-radius:99px;margin-left:.3rem">PASS</span>'
+    : '';
+  var dashCard = '<div style="margin:.5rem .5rem .25rem;background:linear-gradient(135deg,#141200,#1c1900);'
+    +'border:1px solid var(--bd2);border-radius:14px;padding:.85rem 1rem">'
+    +'<div style="font-family:var(--dm);font-size:.65rem;color:var(--t1);font-weight:700;margin-bottom:.6rem">'
+    +'Hello, '+escHtml(u)+' &#x1F44B;'+passTag+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.4rem">'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
+    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--gold)">'+pts+'</div>'
+    +'<div style="font-size:.42rem;color:var(--t3)">Points</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
+    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--green)">'+(live||'0')+'</div>'
+    +'<div style="font-size:.42rem;color:var(--t3)">Live</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
+    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--gold)">'+(today||'0')+'</div>'
+    +'<div style="font-size:.42rem;color:var(--t3)">Today</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
+    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--gold)">'+streak+'</div>'
+    +'<div style="font-size:.42rem;color:var(--t3)">Streak</div></div>'
+    +'</div></div>';
   var g=data.groups||{live:[],today:[],upcoming:[],results:[]};
-  var html='';
+  var html=dashCard;
   if (!data.total) {
-    html='<div class="loading-center" style="flex-direction:column;gap:.5rem;padding:2.5rem">'
-      +'<div style="font-size:2rem">&#x1F3C6;</div>'
-      +'<div>Copa Am&eacute;rica 2024</div>'
-      +'<div style="font-size:.55rem;color:var(--t3)">Tournament data loading&hellip;</div></div>';
-    el.innerHTML=html; return;
+    var flags = ['🇦🇷','🇧🇷','🇺🇾','🇨🇴','🇺🇸','🇲🇽','🇨🇱','🇪🇨','🇵🇦','🇨🇦','🇵🇾','🇵🇪','🇧🇴','🇯🇲','🇻🇪','🇨🇷'];
+    html = '<div style="padding:.75rem">'
+      +'<div style="background:linear-gradient(135deg,#111000,#1a1500);border:2px solid var(--gold);'
+      +'border-radius:14px;padding:1rem;margin-bottom:.7rem;box-shadow:0 0 24px rgba(255,215,0,.15)">'
+      +'<div style="font-family:var(--df);font-size:1.05rem;font-weight:900;color:var(--gold);margin-bottom:.5rem">&#x1F3C6; Copa Am&eacute;rica</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.6rem">'
+      +'<div style="background:rgba(255,215,0,.08);border-radius:10px;padding:.5rem;text-align:center">'
+      +'<div style="font-family:var(--df);font-size:1.3rem;font-weight:900;color:var(--gold)">16</div>'
+      +'<div style="font-size:.44rem;color:var(--t3)">NATIONS</div></div>'
+      +'<div style="background:rgba(255,215,0,.08);border-radius:10px;padding:.5rem;text-align:center">'
+      +'<div style="font-family:var(--df);font-size:1.3rem;font-weight:900;color:var(--gold)">4</div>'
+      +'<div style="font-size:.44rem;color:var(--t3)">GROUPS</div></div>'
+      +'<div style="background:rgba(255,215,0,.08);border-radius:10px;padding:.5rem;text-align:center">'
+      +'<div style="font-family:var(--df);font-size:1.3rem;font-weight:900;color:var(--gold)">32</div>'
+      +'<div style="font-size:.44rem;color:var(--t3)">MATCHES</div></div></div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:.2rem">'
+      +flags.map(function(f){return '<span style="font-size:1.3rem">'+f+'</span>';}).join('')
+      +'</div></div>'
+      +'<div class="loading-center"><div class="spin"></div>'
+      +'<div style="margin-top:.4rem;font-size:.55rem;color:var(--t3)">Fetching live match data&hellip;</div></div>'
+      +'</div>';
+    el.innerHTML = html; return;
   }
   if (g.live&&g.live.length) {
     html+='<div class="match-section-hdr" style="border-left-color:var(--green)">'
@@ -816,42 +948,56 @@ function toggleAcc(id) {
 }
 
 /* ── STANDINGS ── */
-function standingsLoad() {
-  var el=document.getElementById('standings-body');
-  el.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
-  fetch('/data?type=standings')
-    .then(function(r){return r.json();})
+function standingsLoad(league, btn) {
+  if (btn){ document.querySelectorAll('#st-league-bar .league-btn').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on'); }
+  var _lg = league || 'CA';
+  var el = document.getElementById('standings-body');
+  el.innerHTML = '<div class="loading-center"><div class="spin"></div></div>';
+  fetch('/data?type=standings&league='+(_lg||'CA'))
+    .then(function(r){ return r.json(); })
     .then(function(data){
-      if (!data.groups||!data.groups.length){
-        el.innerHTML='<div class="loading-center">Standings not available yet</div>'; return;
+      if (!data.groups || !data.groups.length) {
+        el.innerHTML = '<div class="loading-center">Standings not available yet</div>'; return;
       }
-      var html='';
-      data.groups.forEach(function(g){
-        html+='<div class="group-card"><div class="group-hdr">&#x1F3C6; '+escHtml(g.name)+'</div>'
-          +'<table class="st-table"><thead><tr>'
-          +'<th style="width:40%">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th style="color:var(--gold)">Pts</th>'
-          +'</tr></thead><tbody>';
-        g.rows.forEach(function(r,i){
-          html+='<tr>'
-            +'<td><span class="st-pos">'+r.position+'</span>'
-            +(r.logo?'<img class="st-logo" src="'+r.logo+'" loading="lazy" onerror="this.style.display=\'none\'">':"")
-            +escHtml(r.team||r.abbr||'')+'</td>'
-            +'<td>'+r.played+'</td><td>'+r.won+'</td><td>'+r.drawn+'</td><td>'+r.lost+'</td>'
-            +'<td>'+(r.gd>0?'+':'')+r.gd+'</td>'
-            +'<td class="st-pts">'+r.points+'</td></tr>';
+      var html = '';
+      data.groups.forEach(function(g) {
+        html += '<div class="group-card"><div class="group-hdr">\u{1F3C6} ' + escHtml(g.name) + '</div>'
+          + '<table class="st-table"><thead><tr>'
+          + '<th style="width:42%">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th>'
+          + '<th style="color:var(--gold)">Pts</th></tr></thead><tbody>';
+        g.rows.forEach(function(row) {
+          var pos = row.position;
+          var dot = pos <= 2
+            ? '<span style="color:#00e5a0">\u{1F7E2}</span> '
+            : pos === 3
+            ? '<span style="color:#ffb800">\u{1F7E1}</span> '
+            : '<span style="color:var(--t3)">' + pos + '</span> ';
+          var logo = row.logo
+            ? '<img class="st-logo" src="' + escHtml(row.logo) + '" loading="lazy" onerror="this.style.display=\'none\'">'
+            : '';
+          html += '<tr>'
+            + '<td>' + dot + logo + escHtml(row.team || row.abbr || '') + '</td>'
+            + '<td>' + row.played + '</td>'
+            + '<td>' + row.won + '</td>'
+            + '<td>' + row.drawn + '</td>'
+            + '<td>' + row.lost + '</td>'
+            + '<td>' + (row.gd > 0 ? '+' : '') + row.gd + '</td>'
+            + '<td class="st-pts">' + row.points + '</td></tr>';
         });
-        html+='</tbody></table></div>';
+        html += '</tbody></table></div>';
       });
-      el.innerHTML=html;
+      el.innerHTML = html;
     })
-    .catch(function(){el.innerHTML='<div class="loading-center">Failed to load standings</div>';});
+    .catch(function(){ el.innerHTML = '<div class="loading-center">Failed to load standings</div>'; });
 }
 
 /* ── SCORERS ── */
-function scorersLoad() {
+function scorersLoad(league, btn) {
+  if (btn){ document.querySelectorAll('#sc-league-bar .league-btn').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on'); }
+  var _lg = league || 'CA';
   var el=document.getElementById('scorers-body');
   el.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
-  fetch('/data?type=scorers')
+  fetch('/data?type=scorers&league='+(_lg||'CA'))
     .then(function(r){return r.json();})
     .then(function(data){
       if (!data.scorers||!data.scorers.length){
@@ -884,7 +1030,7 @@ function predictLoad() {
   el.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
   var badge=document.getElementById('predict-score-badge');
   if (badge) badge.textContent='pts: '+caScore.points+'  streak: '+caScore.streak;
-  fetch('/data?type=fixtures')
+  fetch('/data?type=fixtures&league=' + (_currentLeague || 'ALL'))
     .then(function(r){return r.json();})
     .then(function(data){
       var upcoming=(data.matches||[]).filter(function(m){
@@ -936,7 +1082,7 @@ function makePrediction(matchId, outcome) {
 var _news={page:1,loading:false,hasMore:true,filter:'all',obs:null};
 
 function newsSetFilter(filter,btn) {
-  _news.filter=filter; _news.page=1; _news.hasMore=true; _news.loading=false; _news.obs=null;
+  _news.filter=filter; _news.page=1; _news.hasMore = data.hasMore !== false; _news.loading=false; _news.obs=null;
   document.querySelectorAll('.nfbtn').forEach(function(b){b.classList.remove('on');});
   if (btn) btn.classList.add('on');
   var nb=document.getElementById('news-body');
@@ -944,7 +1090,7 @@ function newsSetFilter(filter,btn) {
   newsLoad();
 }
 function newsRefresh() {
-  _news.page=1; _news.hasMore=true; _news.loading=false; _news.obs=null;
+  _news.page=1; _news.hasMore = data.hasMore !== false; _news.loading=false; _news.obs=null;
   var nb=document.getElementById('news-body');
   if (nb) nb.innerHTML='';
   toast('Refreshing news...');
@@ -1095,7 +1241,7 @@ function piLogin() {
       console.error('[CopaAmerica] Auth error:', err);
       if (btn)     { btn.disabled = false; btn.style.opacity = '1'; }
       if (btnText) btnText.textContent = 'Sign In with Pi';
-      if (lmsg)    lmsg.textContent = 'Try again';
+      if (lmsg)    lmsg.textContent = 'Continue with your Pi account';
     });
 }
 
@@ -1119,7 +1265,21 @@ function launchApp() {
     var a = document.querySelector('.scr.on');
     if (a && a.id === 's-home') homeLoad();
   }, 60000);
-  toast('Welcome ' + (piUser ? '@' + piUser.username : 'Pioneer') + '!');
+  toast('Welcome ' + (piUser ? '@' + piUser.username : 'Pioneer') + '! ??');
+  /* Update home greeting */
+  var greet = document.getElementById('home-greeting');
+  if (greet && piUser) {
+    var today = new Date();
+    var matches_today = 0;
+    greet.innerHTML = '<div style="background:linear-gradient(135deg,#111000,#1a1500);'
+      +'border:1px solid var(--gold);border-radius:14px;padding:.8rem 1rem;'
+      +'margin:.4rem .5rem;display:flex;align-items:center;justify-content:space-between">'
+      +'<div><div style="font-family:var(--dm);font-size:.78rem;font-weight:800;color:var(--t1)">'
+      +'Hello, @'+piUser.username+' ??</div>'
+      +'<div style="font-size:.5rem;color:var(--t3);margin-top:.15rem">'
+      +'Points: '+caScore.points+' • Streak: '+caScore.streak+'</div></div>'
+      +'<div style="font-family:var(--df);font-size:1.6rem">??</div></div>';
+  }
 }
 
 function onIncompletePayment(payment) {
@@ -1266,7 +1426,7 @@ function imgLoad() {
   fetch('/images?category='+IMG.cat+'&page='+IMG.page)
     .then(function(r){return r.json();})
     .then(function(data){
-      IMG.hasMore = !!(data.hasMore!==false && (data.images||[]).length>=3);
+      IMG.hasMore = data.hasMore !== false;
       IMG.page++;
       var images=data.images||[];
       if (images.length) imgRender(images);
@@ -1360,6 +1520,12 @@ setInterval(function(){
   if (active.id === 's-home')    homeLoad();
   if (active.id === 's-news' && !_news.loading && _news.hasMore) newsLoad();
 }, 90000);
+
+
+
+
+
+
 
 
 </script>
