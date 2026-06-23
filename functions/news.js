@@ -1,8 +1,7 @@
 /**
- * CopaAmerica · /news · v3.0
- * Real JSON APIs only — no RSS (blocked from CF Workers)
- * ESPN + Guardian + football match reports
- * Unlimited pagination · Auto-refresh safe · Fast
+ * CopaAmerica · /news · v4.0
+ * Real sources — ESPN + Guardian + football-data.org match reports
+ * Unlimited pagination · stale-while-revalidate · fast
  */
 
 const CORS = {
@@ -12,64 +11,77 @@ const CORS = {
   'Cache-Control':                'public, max-age=60, stale-while-revalidate=120',
 };
 
-/* ── ESPN Copa América news (primary — best source) ── */
-async function fetchESPNCA() {
-  try {
-    const r = await fetch(
-      'https://site.api.espn.com/apis/site/v2/sports/soccer/conmebol.copa.america/news?limit=50',
-      { signal: AbortSignal.timeout(5000) }
-    );
-    if (!r.ok) return [];
-    const d = await r.json();
-    return (d.articles || []).slice(0, 40).map((a, i) => ({
-      id:      'ca_' + i + '_' + Date.now(),
-      title:   a.headline || a.title || '',
-      summary: a.description || a.summary || '',
-      image:   a.images?.[0]?.url || null,
-      source:  'ESPN',
-      url:     a.links?.web?.href || a.link || '',
-      date:    a.published || a.lastModified || new Date().toISOString(),
-      category:'copa-america',
-    })).filter(a => a.title);
-  } catch(e) { return []; }
-}
+/* Rotate query per page for variety */
+const ESPN_SLUGS = [
+  { slug:'conmebol.copa.america',  name:'Copa América' },
+  { slug:'conmebol.libertadores',  name:'Libertadores' },
+  { slug:'soccer',                 name:'ESPN FC' },
+];
 
-/* ── ESPN general soccer news (secondary — always has content) ── */
-async function fetchESPNSoccer() {
+async function fetchESPN(page) {
+  const idx  = (page - 1) % ESPN_SLUGS.length;
+  const comp = ESPN_SLUGS[idx];
   try {
     const r = await fetch(
-      'https://site.api.espn.com/apis/site/v2/sports/soccer/news?limit=40',
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/${comp.slug}/news?limit=50`,
       { signal: AbortSignal.timeout(5000) }
     );
     if (!r.ok) return [];
     const d = await r.json();
-    return (d.articles || []).slice(0, 25).map((a, i) => ({
-      id:      'espns_' + i + '_' + Date.now(),
+    return (d.articles || []).map((a, i) => ({
+      id:      `espn_${comp.slug}_${i}_${page}`,
       title:   a.headline || a.title || '',
-      summary: a.description || a.summary || '',
+      summary: (a.description || a.summary || '').slice(0, 200),
       image:   a.images?.[0]?.url || null,
-      source:  'ESPN FC',
-      url:     a.links?.web?.href || a.link || '',
+      source:  comp.name,
+      url:     a.links?.web?.href || '',
       date:    a.published || new Date().toISOString(),
       category:'football',
     })).filter(a => a.title);
   } catch(e) { return []; }
 }
 
-/* ── Guardian API (test key — 12 free/day, enough with CF caching) ── */
-async function fetchGuardian(key) {
-  const apiKey = key || 'test';
+async function fetchESPNGeneral(page) {
   try {
-    const queries = ['copa america', 'south america football', 'conmebol'];
-    const q = queries[Math.floor(Date.now() / 3600000) % queries.length];
     const r = await fetch(
-      `https://content.guardianapis.com/search?q=${encodeURIComponent(q)}&section=football&show-fields=thumbnail,trailText&page-size=30&api-key=${apiKey}`,
+      'https://site.api.espn.com/apis/site/v2/sports/soccer/news?limit=50',
+      { signal: AbortSignal.timeout(5000) }
+    );
+    if (!r.ok) return [];
+    const d = await r.json();
+    const offset = (page - 1) * 15;
+    return (d.articles || []).slice(offset, offset + 20).map((a, i) => ({
+      id:      `espng_${page}_${i}`,
+      title:   a.headline || '',
+      summary: (a.description || a.summary || '').slice(0, 200),
+      image:   a.images?.[0]?.url || null,
+      source:  'ESPN FC',
+      url:     a.links?.web?.href || '',
+      date:    a.published || new Date().toISOString(),
+      category:'football',
+    })).filter(a => a.title);
+  } catch(e) { return []; }
+}
+
+async function fetchGuardian(page, key) {
+  const queries = [
+    'copa america football',
+    'south america football',
+    'premier league',
+    'champions league',
+    'la liga serie a bundesliga',
+  ];
+  const q = queries[(page - 1) % queries.length];
+  try {
+    const r = await fetch(
+      `https://content.guardianapis.com/search?q=${encodeURIComponent(q)}&section=football` +
+      `&show-fields=thumbnail,trailText&page-size=20&page=${Math.ceil(page/queries.length)}&api-key=${key || 'test'}`,
       { signal: AbortSignal.timeout(6000) }
     );
     if (!r.ok) return [];
     const d = await r.json();
     return (d.response?.results || []).map((a, i) => ({
-      id:      'g_' + i + '_' + Date.now(),
+      id:      `g_${page}_${i}`,
       title:   a.webTitle || '',
       summary: (a.fields?.trailText || '').replace(/<[^>]+>/g, '').slice(0, 200),
       image:   a.fields?.thumbnail || null,
@@ -81,40 +93,45 @@ async function fetchGuardian(key) {
   } catch(e) { return []; }
 }
 
-/* ── Match result articles from TheSportsDB ── */
-async function fetchMatchResults() {
+async function fetchFDResults(apiKey) {
+  if (!apiKey) return [];
   try {
-    const r = await fetch(
-      'https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=4319&s=2024',
-      { signal: AbortSignal.timeout(7000) }
+    const now  = new Date();
+    const from = new Date(now); from.setDate(from.getDate() - 3);
+    const fmt  = d => d.toISOString().slice(0, 10);
+    const r    = await fetch(
+      `https://api.football-data.org/v4/matches?dateFrom=${fmt(from)}&dateTo=${fmt(now)}&status=FINISHED`,
+      { headers: { 'X-Auth-Token': apiKey }, signal: AbortSignal.timeout(7000) }
     );
     if (!r.ok) return [];
     const d = await r.json();
-    return (d.events || [])
-      .filter(e => e.strStatus === 'Match Finished')
-      .slice(0, 20)
-      .map((e, i) => ({
-        id:      'tsdb_' + e.idEvent,
-        title:   `${e.strHomeTeam} ${e.intHomeScore}–${e.intAwayScore} ${e.strAwayTeam} | Copa América`,
-        summary: `Full time: ${e.strHomeTeam} ${e.intHomeScore}, ${e.strAwayTeam} ${e.intAwayScore}. Played ${e.dateEvent || ''} at ${e.strVenue || 'Copa América venue'}.`,
-        image:   e.strThumb || e.strBanner || null,
-        source:  'TheSportsDB',
+    return (d.matches || []).slice(0, 20).map((m, i) => {
+      const hs = m.score?.fullTime?.home;
+      const as = m.score?.fullTime?.away;
+      const home = m.homeTeam?.name || '';
+      const away = m.awayTeam?.name || '';
+      return {
+        id:      `fd_${m.id}`,
+        title:   `${home} ${hs}–${as} ${away} | ${m.competition?.name || 'Football'}`,
+        summary: `Full time: ${home} ${hs}, ${away} ${as}. ${m.competition?.name || ''} match on ${(m.utcDate||'').slice(0,10)}.`,
+        image:   m.homeTeam?.crest || null,
+        source:  'football-data.org',
         url:     '',
-        date:    (e.dateEvent || '') + 'T' + (e.strTime || '00:00:00'),
+        date:    m.utcDate || new Date().toISOString(),
         category:'results',
-      }));
+      };
+    });
   } catch(e) { return []; }
 }
 
-/* ── Hardcoded fallback (always shows something) ── */
-function fallbackArticles() {
+function fallback() {
   const now = new Date().toISOString();
   return [
-    { id:'f1', title:'Copa América — Live Scores & Results', summary:'Follow every match from Copa América with live scores, lineups and match reports for all 16 nations.', image:null, source:'CopaAmerica', url:'', date:now, category:'copa-america' },
-    { id:'f2', title:'Copa América Group Stage Standings', summary:'Current standings from Groups A, B, C and D. Who is advancing to the quarter-finals?', image:null, source:'CopaAmerica', url:'', date:now, category:'copa-america' },
-    { id:'f3', title:'Top Scorers — Copa América 2024', summary:'Who is leading the golden boot race? Check the latest top scorers and assists across all Copa América matches.', image:null, source:'CopaAmerica', url:'', date:now, category:'copa-america' },
-    { id:'f4', title:'Argentina vs Brazil — Head to Head', summary:'The biggest rivalry in South American football. Check Copa América history between the two giants.', image:null, source:'CopaAmerica', url:'', date:now, category:'copa-america' },
-    { id:'f5', title:'CONMEBOL Copa América 2024 — All Teams', summary:'All 16 nations: Argentina, Brazil, Colombia, Uruguay, USA, Mexico, Ecuador, Venezuela, Chile, Peru, Jamaica, Panama, Bolivia, Paraguay, Canada and Costa Rica.', image:null, source:'CopaAmerica', url:'', date:now, category:'copa-america' },
+    { id:'f1', title:'Copa América — Live Tournament Coverage', summary:'Live scores, standings and news for all 16 nations in Copa América.', image:null, source:'CopaAmerica', url:'', date:now },
+    { id:'f2', title:'Copa Libertadores — South America\'s Biggest Club Cup', summary:'Follow every match from CONMEBOL Copa Libertadores — South America\'s Champions League.', image:null, source:'CopaAmerica', url:'', date:now },
+    { id:'f3', title:'World Cup 2026 — USA, Canada and Mexico', summary:'The 2026 FIFA World Cup. 48 teams, 3 host nations, the biggest tournament in football history.', image:null, source:'CopaAmerica', url:'', date:now },
+    { id:'f4', title:'Premier League — Latest Results', summary:'All the latest results, standings and news from the English Premier League.', image:null, source:'CopaAmerica', url:'', date:now },
+    { id:'f5', title:'Champions League — Europe\'s Elite', summary:'Follow every match from the UEFA Champions League group stage and knockouts.', image:null, source:'CopaAmerica', url:'', date:now },
   ];
 }
 
@@ -122,19 +139,20 @@ export async function onRequestGet(context) {
   const url    = new URL(context.request.url);
   const page   = parseInt(url.searchParams.get('page') || '1', 10);
   const filter = url.searchParams.get('filter') || 'all';
-  const key    = context.env?.GUARDIAN_KEY || 'test';
+  const fdKey  = context.env?.FD_API_KEY || 'ff8b4eed3f2b426aab199e77061149b4';
+  const gKey   = context.env?.GUARDIAN_KEY || 'test';
 
-  /* Run all sources in parallel */
-  const [caNews, soccerNews, guardian, results] = await Promise.all([
-    fetchESPNCA(),
-    fetchESPNSoccer(),
-    fetchGuardian(key),
-    fetchMatchResults(),
+  /* Run all in parallel */
+  const [espn, espnG, guardian, fdRes] = await Promise.all([
+    fetchESPN(page),
+    fetchESPNGeneral(page),
+    fetchGuardian(page, gKey),
+    fetchFDResults(fdKey),
   ]);
 
-  let articles = [...caNews, ...soccerNews, ...guardian, ...results];
+  let articles = [...espn, ...espnG, ...guardian, ...fdRes];
 
-  /* Deduplicate by title */
+  /* Deduplicate */
   const seen = new Set();
   articles = articles.filter(a => {
     if (!a.title) return false;
@@ -146,16 +164,16 @@ export async function onRequestGet(context) {
   /* Sort newest first */
   articles.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  /* Filter by category */
+  /* Filter */
   if (filter !== 'all') {
-    const filterMap = {
-      'copa-america': ['copa', 'america', 'conmebol', 'argentina', 'brazil', 'colombia',
-                       'uruguay', 'mexico', 'usa', 'ecuador', 'venezuela', 'chile'],
-      'results':      ['result', 'final', 'win', 'beat', 'defeat', 'draw', 'goal', 'score', '–', '-'],
-      'transfers':    ['transfer', 'sign', 'deal', 'fee', 'move', 'join'],
-      'injuries':     ['injur', 'injure', 'return', 'fitness', 'sidelined'],
+    const maps = {
+      'copa-america': ['copa','america','conmebol','argentina','brazil','colombia','uruguay'],
+      'libertadores': ['libertadores','lib','south america','conmebol'],
+      'results':      ['result','score','win','beat','defeat','draw','goal','–','-'],
+      'transfers':    ['transfer','sign','deal','fee','join','move'],
+      'injuries':     ['injur','return','fitness','sidelined'],
     };
-    const words = filterMap[filter] || [];
+    const words = maps[filter] || [];
     if (words.length) {
       articles = articles.filter(a => {
         const t = (a.title + ' ' + (a.summary || '')).toLowerCase();
@@ -164,19 +182,21 @@ export async function onRequestGet(context) {
     }
   }
 
-  /* Fallback if nothing found */
-  if (!articles.length) articles = fallbackArticles();
+  if (!articles.length) articles = fallback();
 
-  /* Paginate — 15 per page for infinite scroll */
+  /* Paginate — 15 per page */
   const perPage = 15;
   const start   = (page - 1) * perPage;
   const paged   = articles.slice(start, start + perPage);
+
+  /* hasMore: true if there are more articles OR if we can fetch more pages */
+  const hasMore = paged.length >= perPage || page < 10;
 
   return new Response(JSON.stringify({
     success:  true,
     page,
     total:    articles.length,
-    hasMore:  start + perPage < articles.length,
+    hasMore,
     sources:  [...new Set(articles.map(a => a.source))],
     articles: paged,
   }), {
