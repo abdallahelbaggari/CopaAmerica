@@ -35,9 +35,8 @@ input{font-family:inherit}
   text-shadow:0 0 30px rgba(255,215,0,.4)}
 .ca-sub{font-size:.72rem;color:var(--t3);letter-spacing:.12em;
   text-transform:uppercase;margin-bottom:1.2rem}
-.ca-flags{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center;
-  margin-bottom:1.4rem;max-width:280px}
-.ca-flag{font-size:1.4rem}
+
+
 .login-cta{padding:1rem 1.5rem 2.5rem}
 .btn-signin{width:100%;padding:.9rem;background:var(--gold);border:none;
   border-radius:14px;font-family:var(--df);font-size:1.05rem;font-weight:900;
@@ -331,20 +330,9 @@ input{font-family:inherit}
   <div class="login-hero">
     <div class="ca-shield">🏆</div>
     <div class="ca-title">CopaAmerica</div>
-    <div class="ca-sub">Live on Pi Network</div>
-    <div class="ca-flags">
-      <span class="ca-flag">🇦🇷</span><span class="ca-flag">🇧🇷</span>
-      <span class="ca-flag">🇺🇾</span><span class="ca-flag">🇨🇴</span>
-      <span class="ca-flag">🇺🇸</span><span class="ca-flag">🇲🇽</span>
-      <span class="ca-flag">🇨🇱</span><span class="ca-flag">🇪🇨</span>
-      <span class="ca-flag">🇵🇦</span><span class="ca-flag">🇨🇦</span>
-      <span class="ca-flag">🇵🇾</span><span class="ca-flag">🇵🇪</span>
-      <span class="ca-flag">🇧🇴</span><span class="ca-flag">🇯🇲</span>
-      <span class="ca-flag">🇻🇪</span><span class="ca-flag">🇨🇷</span>
-    </div>
-    <p style="font-size:.78rem;color:var(--t2);line-height:1.55;max-width:280px">
-      Live scores · Standings · Predictions<br>News · Pi Payments · All 16 nations
-    </p>
+    <div class="ca-sub">Global Live Football · Pi Network</div>
+    
+    <p style="font-size:.78rem;color:var(--t2);line-height:1.65;max-width:280px">Live scores across 15 competitions.<br>Standings, predictions, news, images<br>and Pi payments — all in one app.</p>
   </div>
   <div class="login-cta">
     <button class="btn-signin" id="loginBtn" onclick="piLogin()">
@@ -369,7 +357,7 @@ input{font-family:inherit}
   <div id="hdr">
     <div>
       <div class="hdr-logo">Copa<span>America</span><sup style="font-size:.4rem;color:var(--gold);vertical-align:super">&trade;</sup></div>
-      <div class="hdr-sub">CONMEBOL &middot; Live Football Experience</div>
+      <div class="hdr-sub">Global Live Football</div>
     </div>
     <div style="display:flex;align-items:center;gap:.4rem"><div style="font-family:var(--dm);font-size:.42rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:99px;padding:.12rem .45rem;color:var(--gold)">v1.0</div><div style="display:flex;align-items:center;gap:.4rem"><div style="font-family:var(--dm);font-size:.42rem;color:var(--t3);background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:.12rem .45rem">v1.0</div><div id="user-chip"></div></div></div>
   </div>
@@ -385,17 +373,17 @@ input{font-family:inherit}
       </div>
             <div class="league-bar" id="league-bar">
         <button class="league-btn on" onclick="setLeague('ALL',this)">All</button>
-        <button class="league-btn" onclick="setLeague('CA',this)">&#x1F3C6; Copa Am&eacute;rica</button>
-        <button class="league-btn" onclick="setLeague('LIB',this)">&#x1F30E; Libertadores</button>
-        <button class="league-btn" onclick="setLeague('SUD',this)">&#x26BD; Sudamericana</button>
-        <button class="league-btn" onclick="setLeague('WC',this)">&#x1F30D; World Cup</button>
-        <button class="league-btn" onclick="setLeague('PL',this)">&#x1F3F4; Premier</button>
-        <button class="league-btn" onclick="setLeague('CL',this)">&#x2B50; Champions</button>
+        <button class="league-btn" onclick="setLeague('CA',this)">Copa América</button>
+        <button class="league-btn" onclick="setLeague('LIB',this)">Libertadores</button>
+        <button class="league-btn" onclick="setLeague('SUD',this)">Sudamericana</button>
+        <button class="league-btn" onclick="setLeague('WC',this)">World Cup</button>
+        <button class="league-btn" onclick="setLeague('PL',this)">Premier League</button>
+        <button class="league-btn" onclick="setLeague('CL',this)">Champions League</button>
         <button class="league-btn" onclick="setLeague('PD',this)">La Liga</button>
         <button class="league-btn" onclick="setLeague('SA',this)">Serie A</button>
         <button class="league-btn" onclick="setLeague('BL1',this)">Bundesliga</button>
         <button class="league-btn" onclick="setLeague('FL1',this)">Ligue 1</button>
-        <button class="league-btn" onclick="setLeague('BSA',this)">&#x1F1E7;&#x1F1F7; Brasileirao</button>
+        <button class="league-btn" onclick="setLeague('BSA',this)">Brasileirao</button>
       </div>
       <div id="home-greeting"></div>
       <div class="scr-scroll" id="home-matches">
@@ -411,10 +399,10 @@ input{font-family:inherit}
         <button onclick="standingsLoad()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
       </div>
             <div class="league-bar" id="st-league-bar">
-        <button class="league-btn on" onclick="standingsLoad('CA',this)">&#x1F3C6; Copa Am&eacute;rica</button>
-        <button class="league-btn" onclick="standingsLoad('WC',this)">&#x1F30D; World Cup</button>
-        <button class="league-btn" onclick="standingsLoad('PL',this)">&#x1F3F4; Premier</button>
-        <button class="league-btn" onclick="standingsLoad('CL',this)">&#x2B50; Champions</button>
+        <button class="league-btn on" onclick="standingsLoad('CA',this)">Copa América</button>
+        <button class="league-btn" onclick="standingsLoad('WC',this)">World Cup</button>
+        <button class="league-btn" onclick="standingsLoad('PL',this)">Premier League</button>
+        <button class="league-btn" onclick="standingsLoad('CL',this)">Champions League</button>
         <button class="league-btn" onclick="standingsLoad('PD',this)">La Liga</button>
         <button class="league-btn" onclick="standingsLoad('SA',this)">Serie A</button>
         <button class="league-btn" onclick="standingsLoad('BL1',this)">Bundesliga</button>
@@ -432,10 +420,10 @@ input{font-family:inherit}
           <div class="scr-hdr-sub">Copa Am&eacute;rica 2024</div></div>
       </div>
             <div class="league-bar" id="sc-league-bar">
-        <button class="league-btn on" onclick="scorersLoad('CA',this)">&#x1F3C6; Copa Am&eacute;rica</button>
-        <button class="league-btn" onclick="scorersLoad('WC',this)">&#x1F30D; World Cup</button>
-        <button class="league-btn" onclick="scorersLoad('PL',this)">&#x1F3F4; Premier</button>
-        <button class="league-btn" onclick="scorersLoad('CL',this)">&#x2B50; Champions</button>
+        <button class="league-btn on" onclick="scorersLoad('CA',this)">Copa América</button>
+        <button class="league-btn" onclick="scorersLoad('WC',this)">World Cup</button>
+        <button class="league-btn" onclick="scorersLoad('PL',this)">Premier League</button>
+        <button class="league-btn" onclick="scorersLoad('CL',this)">Champions League</button>
         <button class="league-btn" onclick="scorersLoad('PD',this)">La Liga</button>
         <button class="league-btn" onclick="scorersLoad('SA',this)">Serie A</button>
         <button class="league-btn" onclick="scorersLoad('BL1',this)">Bundesliga</button>
@@ -623,7 +611,7 @@ input{font-family:inherit}
         <button onclick="imgRefresh()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
       </div>
       <div class="img-catbar">
-        <button class="img-catbtn on" onclick="imgSetCat('all',this)">&#x1F30D; All</button>
+        <button class="img-catbtn on" onclick="imgSetCat('all',this)">All Leagues</button>
         <button class="img-catbtn" onclick="imgSetCat('players',this)">&#x1F3C3; Players</button>
         <button class="img-catbtn" onclick="imgSetCat('stadiums',this)">&#x1F3DF; Stadiums</button>
         <button class="img-catbtn" onclick="imgSetCat('fans',this)">&#x1F3F3; Fans</button>
@@ -698,6 +686,7 @@ input{font-family:inherit}
 <div id="toast"></div>
 
 <script>
+
 var _FD_API_KEY_HINT = 'Set FD_API_KEY in Cloudflare env vars';
 
 var _currentLeague = 'ALL';
@@ -830,111 +819,112 @@ function homeLoad() {
 }
 
 function renderHome(data, el) {
-  /* ── Welcome dashboard card ── */
-  var u     = piUser ? '@'+piUser.username : 'Pioneer';
-  var pts   = caScore ? caScore.points : 0;
-  var streak= caScore ? caScore.streak : 0;
-  var today = (data.groups && data.groups.today) ? data.groups.today.length : 0;
-  var live  = (data.groups && data.groups.live)  ? data.groups.live.length  : 0;
-  var passTag = isCopaPass
-    ? '<span style="background:var(--gold);color:#000;font-size:.42rem;font-weight:900;'
-      +'padding:.1rem .4rem;border-radius:99px;margin-left:.3rem">PASS</span>'
-    : '';
-  var dashCard = '<div style="margin:.5rem .5rem .25rem;background:linear-gradient(135deg,#141200,#1c1900);'
-    +'border:1px solid var(--bd2);border-radius:14px;padding:.85rem 1rem">'
-    +'<div style="font-family:var(--dm);font-size:.65rem;color:var(--t1);font-weight:700;margin-bottom:.6rem">'
-    +'Hello, '+escHtml(u)+' &#x1F44B;'+passTag+'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.4rem">'
+  var g = data.groups || { live:[], today:[], upcoming:[], results:[] };
+  var html = '';
+
+  /* ── Dashboard card ── */
+  var u = piUser ? '@'+piUser.username : 'Pioneer';
+  var live_c  = (g.live||[]).length;
+  var today_c = (g.today||[]).length;
+  var upcoming_c = (g.upcoming||[]).length;
+  var results_c  = (g.results||[]).length;
+  html += '<div style="margin:.5rem .5rem .25rem;background:linear-gradient(135deg,#141200,#1c1900);'
+    +'border:1px solid rgba(255,215,0,.2);border-radius:14px;padding:.85rem 1rem">'
+    +'<div style="font-family:var(--dm);font-size:.65rem;font-weight:700;color:var(--t1);margin-bottom:.55rem">'
+    +'Hello, '+escHtml(u)+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.35rem">'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center;border:1px solid rgba(255,59,59,.2)">'
+    +'<div style="font-family:var(--df);font-size:1.05rem;font-weight:900;color:#ff3b3b">'+live_c+'</div>'
+    +'<div style="font-size:.38rem;color:var(--t3)">LIVE</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center;border:1px solid rgba(255,215,0,.15)">'
+    +'<div style="font-family:var(--df);font-size:1.05rem;font-weight:900;color:var(--gold)">'+today_c+'</div>'
+    +'<div style="font-size:.38rem;color:var(--t3)">TODAY</div></div>'
     +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
-    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--gold)">'+pts+'</div>'
-    +'<div style="font-size:.42rem;color:var(--t3)">Points</div></div>'
+    +'<div style="font-family:var(--df);font-size:1.05rem;font-weight:900;color:var(--t2)">'+upcoming_c+'</div>'
+    +'<div style="font-size:.38rem;color:var(--t3)">UPCOMING</div></div>'
     +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
-    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--green)">'+(live||'0')+'</div>'
-    +'<div style="font-size:.42rem;color:var(--t3)">Live</div></div>'
-    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
-    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--gold)">'+(today||'0')+'</div>'
-    +'<div style="font-size:.42rem;color:var(--t3)">Today</div></div>'
-    +'<div style="background:var(--bg3);border-radius:8px;padding:.4rem;text-align:center">'
-    +'<div style="font-family:var(--df);font-size:1rem;font-weight:900;color:var(--gold)">'+streak+'</div>'
-    +'<div style="font-size:.42rem;color:var(--t3)">Streak</div></div>'
+    +'<div style="font-family:var(--df);font-size:1.05rem;font-weight:900;color:var(--t3)">'+results_c+'</div>'
+    +'<div style="font-size:.38rem;color:var(--t3)">RESULTS</div></div>'
     +'</div></div>';
-  var g=data.groups||{live:[],today:[],upcoming:[],results:[]};
-  var html=dashCard;
-  if (!data.total) {
-    var flags = ['🇦🇷','🇧🇷','🇺🇾','🇨🇴','🇺🇸','🇲🇽','🇨🇱','🇪🇨','🇵🇦','🇨🇦','🇵🇾','🇵🇪','🇧🇴','🇯🇲','🇻🇪','🇨🇷'];
-    html = '<div style="padding:.75rem">'
-      +'<div style="background:linear-gradient(135deg,#111000,#1a1500);border:2px solid var(--gold);'
-      +'border-radius:14px;padding:1rem;margin-bottom:.7rem;box-shadow:0 0 24px rgba(255,215,0,.15)">'
-      +'<div style="font-family:var(--df);font-size:1.05rem;font-weight:900;color:var(--gold);margin-bottom:.5rem">&#x1F3C6; Copa Am&eacute;rica</div>'
-      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.6rem">'
-      +'<div style="background:rgba(255,215,0,.08);border-radius:10px;padding:.5rem;text-align:center">'
-      +'<div style="font-family:var(--df);font-size:1.3rem;font-weight:900;color:var(--gold)">16</div>'
-      +'<div style="font-size:.44rem;color:var(--t3)">NATIONS</div></div>'
-      +'<div style="background:rgba(255,215,0,.08);border-radius:10px;padding:.5rem;text-align:center">'
-      +'<div style="font-family:var(--df);font-size:1.3rem;font-weight:900;color:var(--gold)">4</div>'
-      +'<div style="font-size:.44rem;color:var(--t3)">GROUPS</div></div>'
-      +'<div style="background:rgba(255,215,0,.08);border-radius:10px;padding:.5rem;text-align:center">'
-      +'<div style="font-family:var(--df);font-size:1.3rem;font-weight:900;color:var(--gold)">32</div>'
-      +'<div style="font-size:.44rem;color:var(--t3)">MATCHES</div></div></div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:.2rem">'
-      +flags.map(function(f){return '<span style="font-size:1.3rem">'+f+'</span>';}).join('')
-      +'</div></div>'
-      +'<div class="loading-center"><div class="spin"></div>'
-      +'<div style="margin-top:.4rem;font-size:.55rem;color:var(--t3)">Fetching live match data&hellip;</div></div>'
+
+  /* No matches */
+  if (!data.total || (!live_c && !today_c && !upcoming_c && !results_c)) {
+    html += '<div class="loading-center" style="flex-direction:column;gap:.5rem;padding:1.5rem">'
+      +'<div class="spin"></div>'
+      +'<div style="font-size:.58rem;color:var(--t3)">Fetching live match data...</div>'
+      +'<div style="font-size:.5rem;color:var(--t4);margin-top:.2rem">Check your connection or try another league</div>'
       +'</div>';
     el.innerHTML = html; return;
   }
-  if (g.live&&g.live.length) {
-    html+='<div class="match-section-hdr" style="border-left-color:var(--green)">'
+
+  /* LIVE */
+  if ((g.live||[]).length) {
+    html += '<div class="match-section-hdr" style="border-left-color:#ff3b3b">'
       +'<span class="pulse-dot"></span><span>LIVE NOW</span>'
-      +'<span style="font-size:.5rem;color:var(--t4)">'+g.live.length+'</span></div>';
-    g.live.forEach(function(m){html+=renderMatchCard(m,true);});
+      +'<span style="font-size:.44rem;color:var(--t4)">'+g.live.length+'</span></div>';
+    g.live.forEach(function(m){ html += renderMatchCard(m, true); });
   }
-  if (g.today&&g.today.length) {
-    html+='<div class="match-section-hdr" style="border-left-color:var(--gold)">'
-      +'<span>TODAY</span><span style="font-size:.5rem;color:var(--t4)">'+g.today.length+'</span></div>';
-    g.today.forEach(function(m){html+=renderMatchCard(m,false);});
+
+  /* TODAY */
+  if ((g.today||[]).length) {
+    html += '<div class="match-section-hdr" style="border-left-color:var(--gold)">'
+      +'<span>TODAY</span>'
+      +'<span style="font-size:.44rem;color:var(--t4)">'+g.today.length+'</span></div>';
+    g.today.forEach(function(m){ html += renderMatchCard(m, false); });
   }
-  if (g.upcoming&&g.upcoming.length) {
-    html+='<div class="match-section-hdr"><span>UPCOMING</span>'
-      +'<span style="font-size:.5rem;color:var(--t4)">'+g.upcoming.length+'</span></div>';
-    g.upcoming.forEach(function(m){html+=renderMatchCard(m,false);});
+
+  /* UPCOMING */
+  if ((g.upcoming||[]).length) {
+    html += '<div class="match-section-hdr" style="border-left-color:var(--t4)">'
+      +'<span>UPCOMING</span>'
+      +'<span style="font-size:.44rem;color:var(--t4)">'+g.upcoming.length+'</span></div>';
+    g.upcoming.slice(0, 20).forEach(function(m){ html += renderMatchCard(m, false); });
   }
-  if (g.results&&g.results.length) {
-    var rid='acc_'+Date.now();
-    html+='<div class="results-accordion"><div class="results-accordion-hdr" onclick="toggleAcc(\''+rid+'\')">'
-      +'<div style="display:flex;align-items:center;gap:.4rem">'
-      +'<span class="results-title">RESULTS</span>'
-      +'<span class="results-count">'+g.results.length+'</span></div>'
+
+  /* RESULTS */
+  if ((g.results||[]).length) {
+    var rid = 'res_'+Date.now();
+    html += '<div class="results-accordion">'
+      +'<div class="results-accordion-hdr" onclick="toggleAcc(\''+rid+'\');">'
+      +'<span class="results-title">RECENT RESULTS</span>'
+      +'<span class="results-count">'+g.results.length+'</span>'
       +'<span class="chevron" id="chev_'+rid+'">&#x25BC;</span></div>'
       +'<div class="results-body" id="'+rid+'">';
-    g.results.forEach(function(m){html+=renderMatchCard(m,false);});
-    html+='</div></div>';
+    g.results.forEach(function(m){ html += renderMatchCard(m, false); });
+    html += '</div></div>';
   }
-  el.innerHTML=html;
+
+  el.innerHTML = html;
 }
 
 function renderMatchCard(m, isLive) {
-  var hasScore = m.homeScore!==null&&m.homeScore!==undefined&&m.awayScore!==null&&m.awayScore!==undefined;
-  var isDone   = m.isDone||m.status==='post';
-  var cph='width:22px;height:22px;font-size:.8rem;text-align:center;flex-shrink:0';
+  var hasScore = m.homeScore !== null && m.homeScore !== undefined
+              && m.awayScore !== null && m.awayScore !== undefined;
+  var isDone   = m.isDone || m.status === 'FINISHED' || m.status === 'post';
+  var timeStr  = isDone ? 'FT'
+    : isLive  ? (m.minute || 'LIVE')
+    : fmtTime(m.utcDate);
+  var scoreHtml = hasScore
+    ? '<div class="mc-score">'+m.homeScore+'<span class="mc-sep">-</span>'+m.awayScore+'</div>'
+    : '<div class="mc-score" style="color:var(--t4);font-size:.7rem">vs</div>';
+  var homeLogo = m.homeLogo
+    ? '<img class="mc-logo" src="'+escHtml(m.homeLogo)+'" loading="lazy" onerror="this.style.display=\'none\'">'
+    : '<div class="mc-logo-ph"></div>';
+  var awayLogo = m.awayLogo
+    ? '<img class="mc-logo" src="'+escHtml(m.awayLogo)+'" loading="lazy" onerror="this.style.display=\'none\'">'
+    : '<div class="mc-logo-ph"></div>';
+  var comp = m.competition
+    ? '<div class="mc-comp">'+escHtml(m.competition)+'</div>' : '';
   return '<div class="match-card">'
     +'<div class="mc-row">'
-    +(isLive?'<div class="mc-time mc-live">'+(m.minute?m.minute+"'":'LIVE')+'</div>'
-             :'<div class="mc-time">'+(isDone?'FT':fmtTime(m.utcDate))+'</div>')
+    +'<div class="mc-time'+(isLive?' mc-live':'')+'">'+escHtml(timeStr)+'</div>'
     +'<div class="mc-teams">'
-    +'<div class="mc-team">'
-    +(m.homeLogo?'<img class="mc-logo" src="'+m.homeLogo+'" loading="lazy" onerror="this.style.display=\'none\'">'
-                :'<div style="'+cph+'">&#x26BD;</div>')
-    +'<span class="mc-name">'+escHtml(m.homeTeam||m.homeAbbr||'')+'</span></div>'
-    +'<div class="mc-team">'
-    +(m.awayLogo?'<img class="mc-logo" src="'+m.awayLogo+'" loading="lazy" onerror="this.style.display=\'none\'">'
-                :'<div style="'+cph+'">&#x26BD;</div>')
-    +'<span class="mc-name">'+escHtml(m.awayTeam||m.awayAbbr||'')+'</span></div></div>'
-    +(hasScore?'<div class="mc-score">'+m.homeScore+'<span class="mc-sep">-</span>'+m.awayScore+'</div>'
-              :'<div class="mc-score mc-score-dash">-</div>')
+    +'<div class="mc-team">'+homeLogo+'<span class="mc-name">'+escHtml(m.homeTeam||m.homeAbbr||'TBA')+'</span></div>'
+    +'<div class="mc-team">'+awayLogo+'<span class="mc-name">'+escHtml(m.awayTeam||m.awayAbbr||'TBA')+'</span></div>'
     +'</div>'
-    +(m.venue?'<div class="mc-venue">&#x1F3DF; '+escHtml(m.venue)+'</div>':'')
+    +scoreHtml
+    +'</div>'
+    +comp
     +'</div>';
 }
 
@@ -1103,7 +1093,7 @@ function newsLoad() {
     .then(function(r){return r.json();})
     .then(function(data){
       var articles=data.articles||[];
-      _news.hasMore=!!(data.hasMore!==false&&articles.length>=5);
+      _news.hasMore = data.hasMore !== false && articles.length > 0;
       _news.page++;
       var nb=document.getElementById('news-body');
       if (!nb) return;
@@ -1120,32 +1110,29 @@ function newsLoad() {
     .finally(function(){_news.loading=false; newsAttachObs();});
 }
 function renderNews(articles) {
-  var el=document.getElementById('news-body');
+  var el = document.getElementById('news-body');
   if (!el) return;
-  articles.forEach(function(a){
-    var isNew=(Date.now()-new Date(a.date).getTime())<1800000;
-    var card=document.createElement('div');
+  articles.forEach(function(a) {
+    if (!a || !a.title) return;
+    var isNew = (Date.now() - new Date(a.date).getTime()) < 3600000;
+    var card  = document.createElement('div');
+    card.className = 'news-card2';
+    if (a.url) card.onclick = function(){ window.open(a.url,'_blank'); };
+    var img = '';
     if (a.image) {
-      card.className='news-card2';
-      card.onclick=function(){if(a.url)window.open(a.url,'_blank');};
-      var img=document.createElement('img');
-      img.className='news-card2-img'; img.src=a.image; img.loading='lazy';
-      img.onerror=function(){this.parentNode.removeChild(this);};
-      var body=document.createElement('div'); body.className='news-card2-body';
-      body.innerHTML='<div class="news-card2-meta"><span class="news-tag">'+escHtml(a.source||'')+'</span>'
-        +'<span class="news-ago">'+fmtDate(a.date)+'</span></div>'
-        +'<div class="news-card2-title">'+(isNew?'<span class="news-breaking">LIVE</span>':'')+escHtml(a.title||'')+'</div>'
-        +(a.summary?'<div class="news-card2-summary">'+escHtml(a.summary)+'</div>':'');
-      card.appendChild(img); card.appendChild(body);
-    } else {
-      card.className='news-card2'; card.style.borderTop='1px solid var(--bd)';
-      card.onclick=function(){if(a.url)window.open(a.url,'_blank');};
-      card.innerHTML='<div class="news-card2-body"><div class="news-card2-meta">'
-        +'<span class="news-tag">'+escHtml(a.source||'')+'</span>'
-        +'<span class="news-ago">'+fmtDate(a.date)+'</span></div>'
-        +'<div class="news-card2-title">'+(isNew?'<span class="news-breaking">LIVE</span>':'')+escHtml(a.title||'')+'</div>'
-        +(a.summary?'<div class="news-card2-summary">'+escHtml(a.summary)+'</div>':'')+'</div>';
+      img = '<img class="news-card2-img" src="'+escHtml(a.image)+'" loading="lazy" '
+        +'onerror="this.style.display=\'none\'">';
     }
+    var breaking = isNew ? '<span class="news-breaking">NEW</span>' : '';
+    card.innerHTML = img
+      +'<div class="news-card2-body">'
+      +'<div class="news-card2-meta">'
+      +'<span class="news-tag">'+escHtml(a.source||'Football')+'</span>'
+      +'<span class="news-ago">'+fmtDate(a.date)+'</span>'
+      +'</div>'
+      +'<div class="news-card2-title">'+breaking+escHtml(a.title)+'</div>'
+      +(a.summary ? '<div class="news-card2-summary">'+escHtml(a.summary.slice(0,180))+'</div>' : '')
+      +'</div>';
     el.appendChild(card);
   });
 }
@@ -1455,33 +1442,44 @@ function imgAttachObs() {
 }
 
 function imgRender(images) {
-  var grid=document.getElementById('img-grid');
+  var grid = document.getElementById('img-grid');
   if (!grid) return;
-  images.forEach(function(img){
+  images.forEach(function(img) {
+    if (!img || !img.url) return;
     IMG.allImages.push(img);
-    var idx=IMG.allImages.length-1;
-    var initials=(img.source||'CA').slice(0,2).toUpperCase();
-    var post=document.createElement('div'); post.className='img-post';
-    var hdr=document.createElement('div'); hdr.className='img-post-hdr';
-    hdr.innerHTML='<div class="img-post-avatar">'+escHtml(initials)+'</div>'
+    var idx = IMG.allImages.length - 1;
+    var post = document.createElement('div');
+    post.className = 'img-post';
+    var initials = (img.source || 'FO').slice(0,2).toUpperCase();
+    var hdr = document.createElement('div');
+    hdr.className = 'img-post-hdr';
+    hdr.innerHTML = '<div class="img-post-avatar">'+escHtml(initials)+'</div>'
       +'<div style="flex:1;min-width:0">'
       +'<div class="img-post-source">'+escHtml(img.source||'Football')+'</div>'
       +'<div class="img-post-time">'+escHtml(img.license||'CC Licensed')+'</div>'
       +'</div>';
-    var imgEl=document.createElement('img'); imgEl.className='img-post-img';
-    imgEl.setAttribute('data-src',img.thumb||img.url);
-    imgEl.alt=(img.caption||'').slice(0,60); imgEl.loading='lazy';
-    imgEl.onerror=function(){this.style.display='none';};
-    imgEl.onclick=(function(i){return function(){imgOpen(i);};})(idx);
-    _lazyObs.observe(imgEl);
-    var cap=img.caption?'<div class="img-post-caption">'+escHtml(img.caption.slice(0,100))+'</div>':'';
-    var acts=document.createElement('div'); acts.className='img-post-actions';
-    acts.innerHTML='<span class="img-act" onclick="imgOpen('+idx+')">&#x1F50D;</span>'
-      +'<span class="img-act" onclick="imgShare('+idx+')">&#x2B06;</span>'
-      +'<span class="img-act" onclick="imgDl('+idx+')">&#x2B07;</span>';
-    post.appendChild(hdr); post.appendChild(imgEl);
-    if (img.caption){var capEl=document.createElement('div');capEl.className='img-post-caption';capEl.textContent=img.caption.slice(0,100);post.appendChild(capEl);}
-    post.appendChild(acts); grid.appendChild(post);
+    var imgEl = document.createElement('img');
+    imgEl.className = 'img-post-img';
+    imgEl.src = img.thumb || img.url;
+    imgEl.alt = (img.caption||'').slice(0,60);
+    imgEl.loading = 'lazy';
+    imgEl.onerror = function(){ this.style.display = 'none'; };
+    imgEl.onclick = (function(i){ return function(){ imgOpen(i); }; })(idx);
+    var acts = document.createElement('div');
+    acts.className = 'img-post-actions';
+    acts.innerHTML = '<span class="img-act" onclick="imgOpen('+idx+')">View</span>'
+      +'<span class="img-act" onclick="imgShare('+idx+')">Share</span>'
+      +'<span class="img-act" onclick="imgDl('+idx+')">Save</span>';
+    post.appendChild(hdr);
+    post.appendChild(imgEl);
+    if (img.caption) {
+      var capEl = document.createElement('div');
+      capEl.className = 'img-post-caption';
+      capEl.textContent = img.caption.slice(0,100);
+      post.appendChild(capEl);
+    }
+    post.appendChild(acts);
+    grid.appendChild(post);
   });
 }
 
@@ -1520,6 +1518,7 @@ setInterval(function(){
   if (active.id === 's-home')    homeLoad();
   if (active.id === 's-news' && !_news.loading && _news.hasMore) newsLoad();
 }, 90000);
+
 
 
 
