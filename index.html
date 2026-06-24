@@ -66,8 +66,7 @@ input{font-family:inherit}
 .hdr-sub{font-size:.42rem;color:var(--t3);letter-spacing:.05em;margin-top:.05rem}
 #user-chip{font-family:var(--dm);font-size:.52rem;color:var(--gold);font-weight:700}
 #main{flex:1;overflow:hidden;position:relative}
-.scr{display:none;flex-direction:column;height:100%;overflow:hidden;
-  animation:fadeIn .18s ease}
+.scr{display:none;flex-direction:column;height:100%;overflow:hidden}
 .scr.on{display:flex}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .scr-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
@@ -193,8 +192,7 @@ input{font-family:inherit}
   color:var(--gold);font-weight:700}
 
 /* ── NEWS ── */
-.news-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:calc(var(--nav-h)+2rem);display:flex;flex-direction:column}
+.news-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+2rem);min-height:0;height:0}
 .news-feed::-webkit-scrollbar{display:none}
 .news-card2{background:var(--bg1);margin:0 0 .5rem;overflow:hidden;cursor:pointer;
   border-radius:0;animation:fadeIn .2s ease;transition:opacity .15s;display:block;
@@ -283,8 +281,7 @@ input{font-family:inherit}
   border-radius:99px;color:var(--t3);cursor:pointer;transition:all .15s}
 .img-catbtn.on{background:var(--gold);border-color:var(--gold);color:#000;font-weight:900}
 .img-catbtn:active{transform:scale(.93)}
-.img-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:calc(var(--nav-h)+2rem)}
+.img-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+2rem);min-height:0;height:0}
 .img-feed::-webkit-scrollbar{display:none}
 
 /* ── SKELETON CARDS ── */
@@ -394,44 +391,46 @@ input{font-family:inherit}
     <!-- 📊 STANDINGS -->
     <section class="scr" id="s-standings">
       <div class="scr-hdr" style="flex-shrink:0">
-        <div><div class="scr-hdr-title">&#x1F4CA; Standings</div>
-          <div class="scr-hdr-sub">All Groups</div></div>
-        <button onclick="standingsLoad()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
+        <div>
+          <div class="scr-hdr-title">&#x1F4CA; Table</div>
+          <div class="scr-hdr-sub">League Standings</div>
+        </div>
+        <button onclick="standingsLoad(_currentStLeague||'PL',null)" style="color:var(--t3);font-size:1rem;padding:.2rem">&#x21BA;</button>
       </div>
-            <div class="league-bar" id="st-league-bar">
-        <button class="league-btn on" onclick="standingsLoad('CA',this)">Copa América</button>
-        <button class="league-btn" onclick="standingsLoad('WC',this)">World Cup</button>
-        <button class="league-btn" onclick="standingsLoad('PL',this)">Premier League</button>
+      <div class="league-bar" id="st-league-bar" style="flex-shrink:0">
+        <button class="league-btn on" onclick="standingsLoad('PL',this)">Premier League</button>
         <button class="league-btn" onclick="standingsLoad('CL',this)">Champions League</button>
         <button class="league-btn" onclick="standingsLoad('PD',this)">La Liga</button>
         <button class="league-btn" onclick="standingsLoad('SA',this)">Serie A</button>
         <button class="league-btn" onclick="standingsLoad('BL1',this)">Bundesliga</button>
+        <button class="league-btn" onclick="standingsLoad('FL1',this)">Ligue 1</button>
         <button class="league-btn" onclick="standingsLoad('BSA',this)">Brasileirao</button>
+        <button class="league-btn" onclick="standingsLoad('DED',this)">Eredivisie</button>
+        <button class="league-btn" onclick="standingsLoad('WC',this)">World Cup</button>
+        <button class="league-btn" onclick="standingsLoad('EC',this)">Euro</button>
       </div>
-      <div class="scr-scroll" id="standings-body">
-        <div class="loading-center"><div class="spin"></div></div>
-      </div>
+      <div class="scr-scroll" id="standings-body"></div>
     </section>
 
     <!-- 👟 SCORERS -->
     <section class="scr" id="s-scorers">
       <div class="scr-hdr" style="flex-shrink:0">
-        <div><div class="scr-hdr-title">&#x1F45F; Top Scorers</div>
-          <div class="scr-hdr-sub">Copa Am&eacute;rica 2024</div></div>
+        <div>
+          <div class="scr-hdr-title">&#x1F45F; Top Scorers</div>
+          <div class="scr-hdr-sub">Goals &amp; Assists</div>
+        </div>
+        <button onclick="scorersLoad(_currentScLeague||'PL',null)" style="color:var(--t3);font-size:1rem;padding:.2rem">&#x21BA;</button>
       </div>
-            <div class="league-bar" id="sc-league-bar">
-        <button class="league-btn on" onclick="scorersLoad('CA',this)">Copa América</button>
-        <button class="league-btn" onclick="scorersLoad('WC',this)">World Cup</button>
-        <button class="league-btn" onclick="scorersLoad('PL',this)">Premier League</button>
+      <div class="league-bar" id="sc-league-bar" style="flex-shrink:0">
+        <button class="league-btn on" onclick="scorersLoad('PL',this)">Premier League</button>
         <button class="league-btn" onclick="scorersLoad('CL',this)">Champions League</button>
         <button class="league-btn" onclick="scorersLoad('PD',this)">La Liga</button>
         <button class="league-btn" onclick="scorersLoad('SA',this)">Serie A</button>
         <button class="league-btn" onclick="scorersLoad('BL1',this)">Bundesliga</button>
+        <button class="league-btn" onclick="scorersLoad('WC',this)">World Cup</button>
         <button class="league-btn" onclick="scorersLoad('BSA',this)">Brasileirao</button>
       </div>
-      <div class="scr-scroll" id="scorers-body">
-        <div class="loading-center"><div class="spin"></div></div>
-      </div>
+      <div class="scr-scroll" id="scorers-body"></div>
     </section>
 
     <!-- 🧠 PREDICT -->
@@ -449,18 +448,24 @@ input{font-family:inherit}
     <!-- 📰 NEWS -->
     <section class="scr" id="s-news">
       <div class="scr-hdr" style="flex-shrink:0">
-        <div><div class="scr-hdr-title">&#x1F4F0; News</div>
-          <div class="scr-hdr-sub">Copa Am&eacute;rica &middot; Live updates</div></div>
-        <button onclick="newsRefresh()" style="color:var(--gold);font-size:.65rem;font-weight:700;font-family:var(--dm);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:99px;padding:.25rem .7rem;cursor:pointer">&#x21BA; Refresh</button>
+        <div>
+          <div class="scr-hdr-title">&#x1F4F0; News</div>
+          <div class="scr-hdr-sub">Live Football News</div>
+        </div>
+        <button onclick="newsRefresh()" style="color:var(--gold);font-size:.62rem;font-weight:700;
+          font-family:var(--dm);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);
+          border-radius:99px;padding:.22rem .65rem;cursor:pointer;touch-action:manipulation">&#x21BA; Refresh</button>
       </div>
-      <div class="nfbar">
+      <!-- Filter bar -->
+      <div class="nfbar" style="flex-shrink:0">
         <button class="nfbtn on" onclick="newsSetFilter('all',this)">All</button>
-        <button class="nfbtn" onclick="newsSetFilter('copa-america',this)">&#x1F3C6; Copa Am</button>
+        <button class="nfbtn" onclick="newsSetFilter('copa-america',this)">Copa Am&eacute;rica</button>
         <button class="nfbtn" onclick="newsSetFilter('libertadores',this)">Libertadores</button>
-        <button class="nfbtn" onclick="newsSetFilter('results',this)">&#x26BD; Results</button>
-        <button class="nfbtn" onclick="newsSetFilter('transfers',this)">&#x1F4B8; Transfers</button>
-        <button class="nfbtn" onclick="newsSetFilter('injuries',this)">&#x1FA7A; Injuries</button>
+        <button class="nfbtn" onclick="newsSetFilter('results',this)">Results</button>
+        <button class="nfbtn" onclick="newsSetFilter('transfers',this)">Transfers</button>
+        <button class="nfbtn" onclick="newsSetFilter('injuries',this)">Injuries</button>
       </div>
+      <!-- Scrollable news feed -->
       <div class="news-feed" id="news-body"></div>
     </section>
 
@@ -605,20 +610,26 @@ input{font-family:inherit}
     <!-- 📸 IMAGES -->
     <section class="scr" id="s-images">
       <div class="scr-hdr" style="flex-shrink:0">
-        <div><div class="scr-hdr-title">&#x1F4F8; Images</div>
-          <div class="scr-hdr-sub">Copa Am&eacute;rica &middot; Gallery</div></div>
-        <button onclick="imgRefresh()" style="color:var(--gold);font-size:.65rem;font-weight:700;font-family:var(--dm);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:99px;padding:.25rem .7rem;cursor:pointer">&#x21BA; Refresh</button>
+        <div>
+          <div class="scr-hdr-title">&#x1F4F8; Media</div>
+          <div class="scr-hdr-sub">Football Images</div>
+        </div>
+        <button onclick="imgRefresh()" style="color:var(--gold);font-size:.62rem;font-weight:700;
+          font-family:var(--dm);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);
+          border-radius:99px;padding:.22rem .65rem;cursor:pointer;touch-action:manipulation">&#x21BA; Refresh</button>
       </div>
-      <div class="img-catbar">
-        <button class="img-catbtn on" onclick="imgSetCat('all',this)">All Leagues</button>
-        <button class="img-catbtn" onclick="imgSetCat('players',this)">&#x1F3C3; Players</button>
-        <button class="img-catbtn" onclick="imgSetCat('stadiums',this)">&#x1F3DF; Stadiums</button>
-        <button class="img-catbtn" onclick="imgSetCat('fans',this)">&#x1F3F3; Fans</button>
-        <button class="img-catbtn" onclick="imgSetCat('trophies',this)">&#x1F3C6; Trophies</button>
+      <!-- Category bar -->
+      <div class="img-catbar" style="flex-shrink:0">
+        <button class="img-catbtn on" onclick="imgSetCat('all',this)">All</button>
+        <button class="img-catbtn" onclick="imgSetCat('players',this)">Players</button>
+        <button class="img-catbtn" onclick="imgSetCat('stadiums',this)">Stadiums</button>
+        <button class="img-catbtn" onclick="imgSetCat('fans',this)">Fans</button>
+        <button class="img-catbtn" onclick="imgSetCat('trophies',this)">Trophies</button>
       </div>
+      <!-- Scrollable image feed -->
       <div class="img-feed" id="img-grid-wrap">
         <div class="img-grid" id="img-grid"></div>
-        <div id="img-sentinel" style="height:1px"></div>
+        <div id="img-sentinel" style="height:4px;width:100%;display:block"></div>
       </div>
     </section>
 
@@ -692,6 +703,9 @@ input{font-family:inherit}
 <div id="toast"></div>
 
 <script>
+var _currentStLeague = "PL";
+var _currentScLeague = "PL";
+
 
 /* CopaAmerica v5.0 */
 var piUser=null;
@@ -717,8 +731,8 @@ function goS(id,btn){
   var el=document.getElementById('s-'+id);if(el)el.classList.add('on');
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  if(id==='standings')standingsLoad('CA',null);
-  if(id==='scorers')scorersLoad('CA',null);
+  if(id==='standings')standingsLoad(_currentStLeague||'PL',null);
+  if(id==='scorers')scorersLoad(_currentScLeague||'PL',null);
   if(id==='predict')predictLoad();
   if(id==='news'&&!document.querySelector('#news-body .news-card2')){_news={page:1,loading:false,hasMore:true,filter:'all',obs:null};newsLoad();}
   if(id==='images'&&!document.getElementById('img-grid').children.length){IMG={page:1,loading:false,hasMore:true,cat:'all',allImages:[],current:0,obs:null};imgLoad();}
@@ -767,6 +781,7 @@ function renderMatchCard(m,isLive){
 
 /* ── STANDINGS ── */
 function standingsLoad(league,btn){
+  _currentStLeague=league||"PL";
   if(btn){document.querySelectorAll('#st-league-bar .league-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');}
   var lg=league||'CA';
   var el=document.getElementById('standings-body');
@@ -795,6 +810,7 @@ function standingsLoad(league,btn){
 
 /* ── SCORERS ── */
 function scorersLoad(league,btn){
+  _currentScLeague=league||"PL";
   if(btn){document.querySelectorAll('#sc-league-bar .league-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');}
   var lg=league||'CA';
   var el=document.getElementById('scorers-body');
@@ -912,7 +928,7 @@ function newsAttachObs(){
       console.log('[CA/news] Sentinel triggered — loading page',_news.page);
       newsLoad();
     }
-  },{rootMargin:'800px',threshold:0});
+  },{rootMargin:'800px',threshold:0,root:null});
   _news.obs.observe(s);
 }
 
@@ -964,7 +980,7 @@ function imgAttachObs(){
       console.log('[CA/images] Sentinel triggered — loading page',IMG.page);
       imgLoad();
     }
-  },{rootMargin:'800px',threshold:0});
+  },{rootMargin:'800px',threshold:0,root:null});
   IMG.obs.observe(s);
 }
 function imgOpen(i){
@@ -1148,6 +1164,7 @@ window.addEventListener('load',function(){
   }, 3000);
   piLogin();
 });
+
 
 
 </script>
