@@ -145,6 +145,7 @@ input{font-family:inherit}
   border-radius:99px;padding:.1rem .4rem;color:var(--t3)}
 .results-body{display:none;border-top:1px solid var(--bd)}
 .results-body.open{display:block}
+.results-body.open{display:block}
 .chevron{font-size:.5rem;color:var(--t3);transition:transform .25s;display:inline-block}
 .chevron.open{transform:rotate(180deg)}
 
@@ -195,11 +196,11 @@ input{font-family:inherit}
 .news-feed{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding-bottom:calc(var(--nav-h)+2rem);display:flex;flex-direction:column}
 .news-feed::-webkit-scrollbar{display:none}
-.news-card2{background:var(--bg2);margin:.3rem 0;overflow:hidden;cursor:pointer;
-  border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);
-  animation:fadeIn .2s ease;transition:opacity .15s}
-.news-card2:active{opacity:.82}
-.news-card2-img{width:100%;height:190px;object-fit:cover;display:block;background:var(--bg3)}
+.news-card2{background:var(--bg1);margin:0 0 .5rem;overflow:hidden;cursor:pointer;
+  border-radius:0;animation:fadeIn .2s ease;transition:opacity .15s;display:block;
+  border-bottom:3px solid var(--bg0)}
+.news-card2:active{opacity:.85}
+.news-card2-img{width:100%;height:220px;object-fit:cover;display:block;background:var(--bg3)}
 .news-card2-body{padding:.6rem .85rem .75rem}
 .news-card2-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem}
 .news-tag{font-family:var(--dm);font-size:.44rem;font-weight:700;
@@ -250,17 +251,16 @@ input{font-family:inherit}
   z-index:200;overflow-y:auto}
 
 /* ── IMAGES ── */
-.img-grid{columns:2;gap:.3rem;padding:.3rem}
-.img-post{break-inside:avoid;margin-bottom:.3rem;border-radius:10px;
-  overflow:hidden;background:var(--bg2);border:1px solid var(--bd)}
+.img-grid{display:flex;flex-direction:column;gap:0}
+.img-post{overflow:hidden;background:var(--bg1);border-bottom:4px solid var(--bg0);
+  display:block;width:100%}
 .img-post-hdr{display:flex;align-items:center;gap:.35rem;padding:.4rem .5rem}
 .img-post-avatar{width:24px;height:24px;border-radius:50%;background:var(--gold);
   color:#000;font-size:.45rem;font-weight:900;display:flex;align-items:center;
   justify-content:center;flex-shrink:0}
 .img-post-source{font-size:.48rem;color:var(--t1);font-weight:700}
 .img-post-time{font-size:.4rem;color:var(--t3)}
-.img-post-img{width:100%;display:block;background:var(--bg3);
-  min-height:80px;object-fit:cover;cursor:pointer}
+.img-post-img{width:100%;display:block;background:var(--bg3);height:280px;object-fit:cover;cursor:pointer}
 .img-post-caption{font-size:.42rem;color:var(--t3);padding:.25rem .5rem .35rem;
   line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;
   -webkit-box-orient:vertical;overflow:hidden}
@@ -451,7 +451,7 @@ input{font-family:inherit}
       <div class="scr-hdr" style="flex-shrink:0">
         <div><div class="scr-hdr-title">&#x1F4F0; News</div>
           <div class="scr-hdr-sub">Copa Am&eacute;rica &middot; Live updates</div></div>
-        <button onclick="newsRefresh()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
+        <button onclick="newsRefresh()" style="color:var(--gold);font-size:.65rem;font-weight:700;font-family:var(--dm);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:99px;padding:.25rem .7rem;cursor:pointer">&#x21BA; Refresh</button>
       </div>
       <div class="nfbar">
         <button class="nfbtn on" onclick="newsSetFilter('all',this)">All</button>
@@ -462,7 +462,6 @@ input{font-family:inherit}
         <button class="nfbtn" onclick="newsSetFilter('injuries',this)">&#x1FA7A; Injuries</button>
       </div>
       <div class="news-feed" id="news-body"></div>
-      <div id="news-sentinel-wrap" style="height:1px;flex-shrink:0"></div>
     </section>
 
     <!-- ⚡ COPA+ -->
@@ -608,7 +607,7 @@ input{font-family:inherit}
       <div class="scr-hdr" style="flex-shrink:0">
         <div><div class="scr-hdr-title">&#x1F4F8; Images</div>
           <div class="scr-hdr-sub">Copa Am&eacute;rica &middot; Gallery</div></div>
-        <button onclick="imgRefresh()" style="color:var(--t3);font-size:1.1rem">&#x21BA;</button>
+        <button onclick="imgRefresh()" style="color:var(--gold);font-size:.65rem;font-weight:700;font-family:var(--dm);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:99px;padding:.25rem .7rem;cursor:pointer">&#x21BA; Refresh</button>
       </div>
       <div class="img-catbar">
         <button class="img-catbtn on" onclick="imgSetCat('all',this)">All Leagues</button>
@@ -693,6 +692,7 @@ input{font-family:inherit}
 <div id="toast"></div>
 
 <script>
+
 /* CopaAmerica v5.0 */
 var piUser=null;
 var isCopaPass=localStorage.getItem('ca_pass')==='1';
@@ -897,10 +897,22 @@ function renderNews(articles){
 }
 function newsAttachObs(){
   var nb=document.getElementById('news-body');if(!nb)return;
-  var old=document.getElementById('news-sentinel');if(old&&old.parentNode)old.parentNode.removeChild(old);
-  var s=document.createElement('div');s.id='news-sentinel';s.style.cssText='height:2px;width:100%;display:block';nb.appendChild(s);
+  /* Remove old sentinel */
+  var old=nb.querySelector('#news-sentinel');
+  if(old)old.parentNode.removeChild(old);
+  /* Create fresh sentinel at bottom of news-body */
+  var s=document.createElement('div');
+  s.id='news-sentinel';
+  s.style.cssText='height:4px;width:100%;display:block;flex-shrink:0';
+  nb.appendChild(s);
   if(_news.obs){_news.obs.disconnect();_news.obs=null;}
-  _news.obs=new IntersectionObserver(function(entries){if(entries[0].isIntersecting&&!_news.loading&&_news.hasMore)newsLoad();},{rootMargin:'600px',threshold:0});
+  /* Use viewport-based observer — news-body is flex so sentinel scrolls with viewport */
+  _news.obs=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting&&!_news.loading&&_news.hasMore){
+      console.log('[CA/news] Sentinel triggered — loading page',_news.page);
+      newsLoad();
+    }
+  },{rootMargin:'800px',threshold:0});
   _news.obs.observe(s);
 }
 
@@ -947,7 +959,12 @@ function imgRender(images){
 function imgAttachObs(){
   var s=document.getElementById('img-sentinel');if(!s)return;
   if(IMG.obs){IMG.obs.disconnect();IMG.obs=null;}
-  IMG.obs=new IntersectionObserver(function(entries){if(entries[0].isIntersecting&&!IMG.loading&&IMG.hasMore)imgLoad();},{rootMargin:'600px',threshold:0});
+  IMG.obs=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting&&!IMG.loading&&IMG.hasMore){
+      console.log('[CA/images] Sentinel triggered — loading page',IMG.page);
+      imgLoad();
+    }
+  },{rootMargin:'800px',threshold:0});
   IMG.obs.observe(s);
 }
 function imgOpen(i){
@@ -972,7 +989,7 @@ function openLegal(page){
 function closeLegal(){var p=document.getElementById('legal-panel');if(p)p.style.display='none';}
 
 /* ── AUTO REFRESH ── */
-setInterval(function(){var a=document.querySelector('.scr.on');if(!a)return;if(a.id==='s-home')homeLoad();if(a.id==='s-news'&&!_news.loading&&_news.hasMore)newsLoad();},90000);
+setInterval(function(){var a=document.querySelector('.scr.on');if(!a)return;if(a.id==='s-home')homeLoad();if(a.id==='s-news'&&!_news.loading&&_news.hasMore)newsLoad();if(a.id==='s-images'&&!IMG.loading&&IMG.hasMore)imgLoad();},60000);
 
 
 function piLogin() {
@@ -1122,8 +1139,16 @@ function renderPassStatus(){
 }
 window.addEventListener('load',function(){
   if(localStorage.getItem('ca_pass')==='1')isCopaPass=true;
-  renderTxHistory();renderPassStatus();piLogin();
+  renderTxHistory();renderPassStatus();
+  /* Prefetch news in background so it's ready when user taps */
+  setTimeout(function(){
+    if(!document.querySelector('#news-body .news-card2')){
+      newsLoad();
+    }
+  }, 3000);
+  piLogin();
 });
+
 
 </script>
 </body>
