@@ -150,7 +150,7 @@ function groupMatches(matches) {
                           .sort((a,b) => a.utcDate.localeCompare(b.utcDate));
   const results  = matches.filter(m => m.isDone)
                           .sort((a,b) => b.utcDate.localeCompare(a.utcDate))
-                          .slice(0,60);
+                          .slice(0,100);
   return { live, today, upcoming: upcoming.slice(0,30), results };
 }
 
@@ -158,7 +158,7 @@ function groupMatches(matches) {
    FIXTURES
 ══════════════════════════════════════════════ */
 async function getFixtures(league, key) {
-  const from = shiftDate(-7);
+  const from = shiftDate(-30);
   const to   = shiftDate(14);
   let matches = [];
 
@@ -183,7 +183,7 @@ async function getFixtures(league, key) {
 
     if (lg.source === 'fd') {
       const d = await fdGet(
-        `competitions/${league}/matches?dateFrom=${from}&dateTo=${to}`, key
+        `competitions/${league}/matches?dateFrom=${from}&dateTo=${to}&limit=100`, key
       );
       matches = (d.matches||[]).map(m => normFD(m, lg.name));
     } else {
