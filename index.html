@@ -766,6 +766,7 @@ input{font-family:inherit}
 
 <script>
 
+
 var _currentStLeague = "PL";
 var _currentScLeague = "PL";
 
@@ -813,7 +814,7 @@ function homeLoad(){
   el.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
   fetch('/data?type=fixtures&league='+(_currentLeague||'ALL'))
     .then(function(r){return r.json();})
-    .then(function(data){_cachedFixtures=data;renderHome(data,el);})
+    .then(function(data){_cachedFixtures=data;if(_homeFilter==='all'){renderHome(data,el);}else{renderHomeFiltered(data);}})
     .catch(function(){el.innerHTML='<div class="loading-center">Failed to load. <span style="color:var(--gold);cursor:pointer" onclick="homeLoad()">Retry</span></div>';});
 }
 function renderHome(data,el){
@@ -828,7 +829,7 @@ function renderHome(data,el){
   if(lc){html+='<div class="match-section-hdr" style="border-left-color:#ff3b3b"><span class="pulse-dot"></span><span>LIVE NOW</span><span style="font-size:.44rem;color:var(--t4)">'+lc+'</span></div>';g.live.forEach(function(m){html+=renderMatchCard(m,true);});}
   if(tc){html+='<div class="match-section-hdr" style="border-left-color:var(--gold)"><span>TODAY</span><span style="font-size:.44rem;color:var(--t4)">'+tc+'</span></div>';g.today.forEach(function(m){html+=renderMatchCard(m,false);});}
   if(uc){html+='<div class="match-section-hdr" style="border-left-color:var(--t4)"><span>UPCOMING</span><span style="font-size:.44rem;color:var(--t4)">'+uc+'</span></div>';g.upcoming.slice(0,25).forEach(function(m){html+=renderMatchCard(m,false);});}
-  if(rc){var rid='res_'+Date.now();html+='<div class="results-accordion"><div class="results-accordion-hdr" onclick="toggleAcc(\''+rid+'\')"><span class="results-title">RECENT RESULTS</span><span class="results-count">'+rc+'</span><span class="chevron" id="chev_'+rid+'">&#x25BC;</span></div><div class="results-body" id="'+rid+'">';g.results.forEach(function(m){html+=renderMatchCard(m,false);});html+='</div></div>';}
+  if(rc){var rid='res_'+Date.now();html+='<div class="results-accordion"><div class="results-accordion-hdr" onclick="toggleAcc(\''+rid+'\')"><span class="results-title">RECENT RESULTS</span><span class="results-count">'+rc+'</span><span class="chevron open" id="chev_'+rid+'">&#x25BC;</span></div><div class="results-body open" id="'+rid+'">';g.results.forEach(function(m){html+=renderMatchCard(m,false);});html+='</div></div>';}
   el.innerHTML=html;
 }
 function renderMatchCard(m,isLive){
@@ -1261,27 +1262,45 @@ function renderHomeFiltered(data) {
   var el = document.getElementById('home-matches');
   if (!el) return;
   var g = data.groups || {};
-  var matches = [];
-  if (_homeFilter === 'all') {
-    matches = [
-      ...(g.live||[]),
-      ...(g.today||[]),
-      ...(g.upcoming||[]),
-      ...(g.results||[]),
-    ];
-  } else {
-    matches = g[_homeFilter] || [];
-  }
-  if (!matches.length) {
-    el.innerHTML = '<div class="loading-center" style="flex-direction:column;gap:.4rem;padding:2rem">'
-      + '<div style="font-size:1.5rem">&#x26BD;</div>'
-      + '<div style="font-size:.6rem;color:var(--t2)">No '
-      + escHtml(_homeFilter === 'all' ? 'matches' : _homeFilter + ' matches')
-      + ' available</div>'
-      + '<div style="font-size:.5rem;color:var(--t3)">Try a different filter or competition</div></div>';
+
+  /* When filter is 'results' — show results directly as a list */
+  if (_homeFilter === 'results') {
+    var results = g.results || [];
+    if (!results.length) {
+      el.innerHTML = '<div class="loading-center" style="flex-direction:column;gap:.4rem;padding:2rem">'
+        + '<div style="font-size:1.5rem">&#x26BD;</div>'
+        + '<div style="font-size:.6rem;color:var(--t2)">No recent results</div>'
+        + '<div style="font-size:.5rem;color:var(--t3)">Results from the last 30 days appear here</div></div>';
+      return;
+    }
+    var html = '<div class="match-section-hdr" style="border-left-color:var(--t3)">'
+      + '<span>RECENT RESULTS</span>'
+      + '<span style="font-size:.44rem;color:var(--t4)">'+results.length+'</span></div>';
+    results.forEach(function(m){ html += renderMatchCard(m, false); });
+    el.innerHTML = html;
     return;
   }
-  /* Show by section */
+
+  /* For other filters */
+  if (_homeFilter !== 'all') {
+    var matches = g[_homeFilter] || [];
+    if (!matches.length) {
+      el.innerHTML = '<div class="loading-center" style="flex-direction:column;gap:.4rem;padding:2rem">'
+        + '<div style="font-size:1.5rem">&#x26BD;</div>'
+        + '<div style="font-size:.6rem;color:var(--t2)">No '
+        + escHtml(_homeFilter) + ' matches</div>'
+        + '<div style="font-size:.5rem;color:var(--t3)">Try a different filter or competition</div></div>';
+      return;
+    }
+    var html2 = '<div class="match-section-hdr" style="border-left-color:var(--gold)">'
+      + '<span>' + escHtml(_homeFilter.toUpperCase()) + '</span>'
+      + '<span style="font-size:.44rem;color:var(--t4)">' + matches.length + '</span></div>';
+    matches.forEach(function(m){ html2 += renderMatchCard(m, _homeFilter === 'live'); });
+    el.innerHTML = html2;
+    return;
+  }
+
+  /* All — normal renderHome */
   renderHome(data, el);
 }
 
@@ -1628,6 +1647,7 @@ function renderEvents(d) {
   html += '</div>';
   return html;
 }
+
 
 </script>
 </body>
