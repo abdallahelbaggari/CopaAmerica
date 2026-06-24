@@ -1,84 +1,121 @@
 /**
- * CopaAmerica · /images · v3.0
- * Wikimedia Commons — truly unlimited infinite scroll
- * Rotates 20+ queries — pages 1→100 all return fresh content
+ * CopaAmerica · /images · v4.0 — INSTAGRAM STYLE UNLIMITED
+ * Wikimedia Commons — 25 rotating queries
+ * Pages 1→100 all return fresh football images
+ * Fast: 2 parallel queries per request
+ * Strong sources: real football match photos, stadiums, players, fans
  */
 
 const CORS = {
   'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Cache-Control':                'public, max-age=300, stale-while-revalidate=600',
+  'Cache-Control':                'public, max-age=180, stale-while-revalidate=360',
 };
 
-/* 20 queries — rotate per page for maximum variety */
-const ALL_QUERIES = [
-  'Copa America football tournament',
-  'Premier League football match',
-  'Champions League football',
-  'World Cup FIFA football',
-  'football stadium crowd',
-  'Copa Libertadores football',
-  'La Liga football Spain',
-  'Bundesliga football Germany',
-  'Serie A football Italy',
-  'football referee goal celebration',
-  'South America football fans',
-  'football training session',
-  'football trophy award ceremony',
-  'Wembley stadium football',
-  'football penalty kick',
-  'football header goal',
-  'international football match',
-  'football pitch aerial view',
-  'football dribbling skill',
-  'football goalkeeper save',
-];
-
-const CAT_QUERIES = {
-  all:      ALL_QUERIES,
-  players:  ['football player dribbling','football striker goal','football midfielder','football defender'],
-  stadiums: ['football stadium full','soccer arena night','football ground crowd','stadium aerial view'],
-  fans:     ['football supporters crowd','football fans celebration','ultras football supporters'],
-  trophies: ['FIFA World Cup trophy','football championship trophy','Copa America trophy CONMEBOL'],
+/* 25 high-quality football queries — all verified to return real photos */
+const QUERIES = {
+  all: [
+    'Association football match',
+    'Football stadium crowd spectators',
+    'Copa America football player',
+    'Premier League football match',
+    'Champions League football',
+    'FIFA World Cup football',
+    'Football goal celebration',
+    'Copa Libertadores football',
+    'Football referee match',
+    'La Liga football Spain',
+    'Bundesliga football Germany',
+    'Football training session',
+    'Football supporters fans crowd',
+    'Serie A football Italy',
+    'Football penalty kick',
+    'Football header goal',
+    'International football match',
+    'Football pitch aerial',
+    'Football dribbling',
+    'Football goalkeeper',
+    'Football trophy winners',
+    'South America football',
+    'Wembley stadium football',
+    'Football press conference',
+    'Football substitute bench',
+  ],
+  players: [
+    'Football player dribbling',
+    'Football striker goal',
+    'Football midfielder pass',
+    'Football defender tackle',
+    'Football player portrait',
+    'Copa America player',
+  ],
+  stadiums: [
+    'Football stadium full crowd',
+    'Soccer stadium night lights',
+    'Football ground aerial view',
+    'Copa America stadium USA',
+    'Football arena atmosphere',
+  ],
+  fans: [
+    'Football supporters celebration',
+    'Football fans crowd match',
+    'Football ultras supporters',
+    'South America football fans',
+    'Football stadium atmosphere',
+  ],
+  trophies: [
+    'Copa America trophy CONMEBOL',
+    'Football championship trophy',
+    'FIFA World Cup trophy',
+    'Football winners medal',
+    'Football cup celebration',
+  ],
 };
 
-async function wikimediaSearch(query, offset, limit) {
-  const url = 'https://commons.wikimedia.org/w/api.php'
-    + '?action=query'
-    + '&generator=search'
-    + '&gsrnamespace=6'
-    + '&gsrsearch=' + encodeURIComponent(query + ' filetype:jpeg|jpg|png')
+async function wikiSearch(query, offset, limit) {
+  const url = 'https://commons.wikimedia.org/w/api.php?action=query'
+    + '&generator=search&gsrnamespace=6'
+    + '&gsrsearch=' + encodeURIComponent(query)
     + '&gsrlimit=' + limit
     + '&gsroffset=' + offset
     + '&prop=imageinfo'
     + '&iiprop=url|size|mime|extmetadata'
     + '&iiurlwidth=1200'
-    + '&format=json'
-    + '&origin=*';
-  const r = await fetch(url, { signal: AbortSignal.timeout(9000) });
+    + '&format=json&origin=*';
+
+  const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
   if (!r.ok) return [];
   const d = await r.json();
+
   return Object.values(d.query?.pages || {}).map(p => {
     const info = p.imageinfo?.[0];
     if (!info) return null;
     const mime = info.mime || '';
-    if (!mime.startsWith('image/') || mime.includes('svg')) return null;
+    /* Only JPG/PNG — no SVG, no GIF */
+    if (!mime.match(/jpeg|jpg|png/i)) return null;
+    /* Skip tiny images */
+    if (info.width && info.width < 400) return null;
+
     const meta    = info.extmetadata || {};
-    const caption = (meta.ImageDescription?.value || meta.ObjectName?.value || p.title || '')
-      .replace(/<[^>]+>/g,'').replace(/&[a-z]+;/gi,'').slice(0,120);
-    const license = (meta.LicenseShortName?.value || 'CC Licensed').slice(0,30);
-    const author  = (meta.Artist?.value || '').replace(/<[^>]+>/g,'').slice(0,50);
-    if (!info.url || info.url.includes('.svg')) return null;
+    const rawCap  = meta.ImageDescription?.value
+                 || meta.ObjectName?.value
+                 || p.title?.replace('File:','') || '';
+    const caption = rawCap.replace(/<[^>]+>/g,'').replace(/&[a-z]+;/gi,' ').trim().slice(0, 120);
+    const license = (meta.LicenseShortName?.value || 'CC Licensed').slice(0, 40);
+    const author  = (meta.Artist?.value || '').replace(/<[^>]+>/g,'').slice(0, 60);
+
+    if (!info.url || info.url.toLowerCase().includes('.svg')) return null;
+
     return {
-      id:      'wm_'+p.pageid,
+      id:      'wm_' + p.pageid,
       url:     info.url,
       thumb:   info.thumburl || info.url,
       fullUrl: info.url,
-      caption: caption || 'Football Image',
+      caption: caption || 'Football',
       author, license,
       source:  'Wikimedia Commons',
-      width:   info.width  || 0,
+      width:   info.width || 0,
       height:  info.height || 0,
     };
   }).filter(Boolean);
@@ -87,53 +124,59 @@ async function wikimediaSearch(query, offset, limit) {
 export async function onRequestGet(context) {
   const url      = new URL(context.request.url);
   const category = url.searchParams.get('category') || 'all';
-  const page     = Math.max(1, parseInt(url.searchParams.get('page')||'1',10));
-  const perPage  = 12;
+  const page     = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
+  const perPage  = 10;
 
-  const queries = CAT_QUERIES[category] || CAT_QUERIES.all;
+  const pool    = QUERIES[category] || QUERIES.all;
+  const q1      = pool[(page - 1) % pool.length];
+  const q2      = pool[page % pool.length];
+  const offset1 = Math.floor((page - 1) / pool.length) * perPage;
+  const offset2 = Math.floor((page - 1) / pool.length) * 5;
 
-  /* Use 2 queries per page for more images and variety */
-  const q1 = queries[(page-1) % queries.length];
-  const q2 = queries[page % queries.length];
-  const offset1 = Math.floor((page-1)/queries.length) * perPage;
-  const offset2 = Math.floor((page-1)/queries.length) * 6;
-
-  /* Run 2 queries in parallel */
-  const [imgs1, imgs2] = await Promise.all([
-    wikimediaSearch(q1, offset1, perPage).catch(()=>[]),
-    wikimediaSearch(q2, offset2, 8).catch(()=>[]),
+  /* 2 parallel Wikimedia calls — doubles throughput */
+  const [r1, r2] = await Promise.all([
+    wikiSearch(q1, offset1, perPage + 4).catch(() => []),
+    wikiSearch(q2, offset2, 8).catch(() => []),
   ]);
 
-  /* Merge and deduplicate */
-  const seen = new Set();
-  const merged = [...imgs1, ...imgs2].filter(img => {
+  /* Merge + deduplicate */
+  const seen   = new Set();
+  const merged = [...r1, ...r2].filter(img => {
     if (!img?.url || seen.has(img.url)) return false;
     seen.add(img.url); return true;
   });
 
-  /* Filter minimum quality */
-  const filtered = merged.filter(img =>
-    img.url &&
-    !img.url.toLowerCase().endsWith('.svg') &&
-    (img.width === 0 || img.width >= 200)
-  );
+  /* Take best images */
+  const images = merged.slice(0, perPage);
 
-  /* Reliable fallbacks */
+  /* Reliable fallbacks if Wikimedia returns nothing */
   const fallbacks = [
-    { id:'fb1', url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Football_Pallo_valmiina-cropped.jpg/800px-Football_Pallo_valmiina-cropped.jpg', thumb:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Football_Pallo_valmiina-cropped.jpg/400px-Football_Pallo_valmiina-cropped.jpg', fullUrl:'https://upload.wikimedia.org/wikipedia/commons/9/91/Football_Pallo_valmiina-cropped.jpg', caption:'Football', source:'Wikimedia Commons', license:'CC BY-SA', width:800, height:600 },
-    { id:'fb2', url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camponotus_flavomarginatus_ant.jpg/800px-Camponotus_flavomarginatus_ant.jpg', thumb:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Football_Pallo_valmiina-cropped.jpg/400px-Football_Pallo_valmiina-cropped.jpg', fullUrl:'https://upload.wikimedia.org/wikipedia/commons/9/91/Football_Pallo_valmiina-cropped.jpg', caption:'Football Match', source:'Wikimedia Commons', license:'CC BY-SA', width:800, height:600 },
+    {
+      id: 'fb1',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Football_Pallo_valmiina-cropped.jpg/1200px-Football_Pallo_valmiina-cropped.jpg',
+      thumb: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Football_Pallo_valmiina-cropped.jpg/600px-Football_Pallo_valmiina-cropped.jpg',
+      fullUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Football_Pallo_valmiina-cropped.jpg',
+      caption: 'Football', source: 'Wikimedia Commons', license: 'CC BY-SA', width: 1200, height: 800,
+    },
+    {
+      id: 'fb2',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Wembley_Stadium_interior_equalized.jpg/1200px-Wembley_Stadium_interior_equalized.jpg',
+      thumb: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Wembley_Stadium_interior_equalized.jpg/600px-Wembley_Stadium_interior_equalized.jpg',
+      fullUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Wembley_Stadium_interior_equalized.jpg',
+      caption: 'Wembley Stadium', source: 'Wikimedia Commons', license: 'CC BY-SA', width: 1200, height: 800,
+    },
   ];
 
-  const result = filtered.length >= 2 ? filtered : [...filtered, ...fallbacks.slice(0, 3-filtered.length)];
+  const result = images.length >= 3 ? images : [...images, ...fallbacks].slice(0, perPage);
 
   return new Response(JSON.stringify({
     success:  true,
     category, page,
     query:    q1,
     total:    result.length,
-    hasMore:  page < 100, /* Always true — 100 pages of variety */
+    hasMore:  page < 100, /* 100 pages — effectively unlimited */
     images:   result,
-  }), { headers: { ...CORS, 'Content-Type':'application/json' } });
+  }), { headers: { ...CORS, 'Content-Type': 'application/json' } });
 }
 
 export async function onRequestOptions() {
