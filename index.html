@@ -353,7 +353,7 @@ input{font-family:inherit}
   <!-- Header -->
   <div id="hdr">
     <div>
-      <div class="hdr-logo">Copa<span>America</span><sup style="font-size:.4rem;color:var(--gold);vertical-align:super">&trade;</sup></div>
+      <div class="hdr-logo">Copa<span>America</span></div>
       <div class="hdr-sub">Global Live Football</div>
     </div>
     <div style="display:flex;align-items:center;gap:.4rem"><div style="font-family:var(--dm);font-size:.42rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:99px;padding:.12rem .45rem;color:var(--gold)">v1.0</div><div style="display:flex;align-items:center;gap:.4rem"><div style="font-family:var(--dm);font-size:.42rem;color:var(--t3);background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:.12rem .45rem">v1.0</div><div id="user-chip"></div></div></div>
@@ -381,6 +381,31 @@ input{font-family:inherit}
         <button class="league-btn" onclick="setLeague('BL1',this)">Bundesliga</button>
         <button class="league-btn" onclick="setLeague('FL1',this)">Ligue 1</button>
         <button class="league-btn" onclick="setLeague('BSA',this)">Brasileirao</button>
+      </div>
+      
+      <!-- Match filter -->
+      <div style="display:flex;gap:.3rem;padding:.3rem .5rem;flex-shrink:0;
+        border-bottom:1px solid var(--bd);background:var(--bg1)">
+        <button class="filter-btn on" id="fb-all"     onclick="setHomeFilter('all',this)"
+          style="flex:1;font-family:var(--dm);font-size:.54rem;font-weight:700;
+          padding:.3rem;background:var(--gold);color:#000;border-radius:8px;
+          cursor:pointer;touch-action:manipulation">All</button>
+        <button class="filter-btn" id="fb-live"  onclick="setHomeFilter('live',this)"
+          style="flex:1;font-family:var(--dm);font-size:.54rem;font-weight:700;
+          padding:.3rem;background:var(--bg3);color:var(--t3);border:1px solid var(--bd);
+          border-radius:8px;cursor:pointer;touch-action:manipulation">Live</button>
+        <button class="filter-btn" id="fb-today" onclick="setHomeFilter('today',this)"
+          style="flex:1;font-family:var(--dm);font-size:.54rem;font-weight:700;
+          padding:.3rem;background:var(--bg3);color:var(--t3);border:1px solid var(--bd);
+          border-radius:8px;cursor:pointer;touch-action:manipulation">Today</button>
+        <button class="filter-btn" id="fb-upcoming" onclick="setHomeFilter('upcoming',this)"
+          style="flex:1;font-family:var(--dm);font-size:.54rem;font-weight:700;
+          padding:.3rem;background:var(--bg3);color:var(--t3);border:1px solid var(--bd);
+          border-radius:8px;cursor:pointer;touch-action:manipulation">Upcoming</button>
+        <button class="filter-btn" id="fb-results" onclick="setHomeFilter('results',this)"
+          style="flex:1;font-family:var(--dm);font-size:.54rem;font-weight:700;
+          padding:.3rem;background:var(--bg3);color:var(--t3);border:1px solid var(--bd);
+          border-radius:8px;cursor:pointer;touch-action:manipulation">Results</button>
       </div>
       <div id="home-greeting"></div>
       <div class="scr-scroll" id="home-matches">
@@ -474,7 +499,7 @@ input{font-family:inherit}
       <div class="scr-hdr" style="flex-shrink:0">
         <div><div class="scr-hdr-title">&#x26A1; COPA+</div>
           <div class="scr-hdr-sub">Pi Payments &middot; Mainnet</div></div>
-        <div id="more-user" style="font-size:.55rem;color:var(--gold);font-weight:700"></div>
+        <div style="display:flex;align-items:center;gap:.5rem"><div id="more-user" style="font-size:.55rem;color:var(--gold);font-weight:700"></div><button onclick="logOut()" style="font-family:var(--dm);font-size:.52rem;color:var(--t3);background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:.22rem .55rem;cursor:pointer;touch-action:manipulation">Sign Out</button></div>
       </div>
       <div class="scr-scroll">
 
@@ -698,11 +723,49 @@ input{font-family:inherit}
     <div id="legal-body"></div>
   </div>
 
+
+  <!-- Match Detail Panel -->
+  <div id="match-panel" style="display:none;position:fixed;inset:0;background:var(--bg0);
+    z-index:150;flex-direction:column;overflow:hidden">
+    <!-- Panel header -->
+    <div style="background:rgba(10,8,0,.97);border-bottom:1px solid var(--bd);
+      padding:.6rem .85rem;display:flex;align-items:center;gap:.5rem;flex-shrink:0">
+      <button onclick="closeMatchPanel()" style="color:var(--gold);font-family:var(--dm);
+        font-size:.75rem;font-weight:700;cursor:pointer;padding:.15rem .1rem;
+        touch-action:manipulation">&#x2190; Back</button>
+      <div id="mp-title" style="font-family:var(--dm);font-size:.6rem;color:var(--t3);
+        flex:1;text-align:center;letter-spacing:.04em"></div>
+    </div>
+    <!-- Tab bar -->
+    <div style="display:flex;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--bg1)">
+      <button class="mp-tab on" id="mp-tab-0" onclick="mpShowTab(0)"
+        style="flex:1;font-family:var(--dm);font-size:.56rem;font-weight:700;
+        padding:.45rem .2rem;color:var(--gold);border-bottom:2px solid var(--gold);
+        cursor:pointer;touch-action:manipulation">Overview</button>
+      <button class="mp-tab" id="mp-tab-1" onclick="mpShowTab(1)"
+        style="flex:1;font-family:var(--dm);font-size:.56rem;font-weight:700;
+        padding:.45rem .2rem;color:var(--t3);border-bottom:2px solid transparent;
+        cursor:pointer;touch-action:manipulation">Lineup</button>
+      <button class="mp-tab" id="mp-tab-2" onclick="mpShowTab(2)"
+        style="flex:1;font-family:var(--dm);font-size:.56rem;font-weight:700;
+        padding:.45rem .2rem;color:var(--t3);border-bottom:2px solid transparent;
+        cursor:pointer;touch-action:manipulation">Stats</button>
+      <button class="mp-tab" id="mp-tab-3" onclick="mpShowTab(3)"
+        style="flex:1;font-family:var(--dm);font-size:.56rem;font-weight:700;
+        padding:.45rem .2rem;color:var(--t3);border-bottom:2px solid transparent;
+        cursor:pointer;touch-action:manipulation">Events</button>
+    </div>
+    <!-- Panel body -->
+    <div id="mp-body" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+      padding-bottom:1rem"></div>
+  </div>
+
 </div><!-- /app -->
 
 <div id="toast"></div>
 
 <script>
+
 var _currentStLeague = "PL";
 var _currentScLeague = "PL";
 
@@ -750,7 +813,7 @@ function homeLoad(){
   el.innerHTML='<div class="loading-center"><div class="spin"></div></div>';
   fetch('/data?type=fixtures&league='+(_currentLeague||'ALL'))
     .then(function(r){return r.json();})
-    .then(function(data){renderHome(data,el);})
+    .then(function(data){_cachedFixtures=data;renderHome(data,el);})
     .catch(function(){el.innerHTML='<div class="loading-center">Failed to load. <span style="color:var(--gold);cursor:pointer" onclick="homeLoad()">Retry</span></div>';});
 }
 function renderHome(data,el){
@@ -772,11 +835,14 @@ function renderMatchCard(m,isLive){
   var isDone=m.isDone||m.status==='FINISHED'||m.status==='post'||m.status==='final';
   var hasScore=m.homeScore!==null&&m.homeScore!==undefined&&m.awayScore!==null&&m.awayScore!==undefined;
   var timeStr=isLive?(m.minute||'LIVE'):(isDone?'FT':fmtTime(m.utcDate));
+  var scoreVal=hasScore?m.homeScore+'-'+m.awayScore:'';
   var score=hasScore?'<div class="mc-score">'+m.homeScore+'<span class="mc-sep">-</span>'+m.awayScore+'</div>':'<div class="mc-score" style="color:var(--t4);font-size:.7rem">vs</div>';
   var hL=m.homeLogo?'<img class="mc-logo" src="'+escHtml(m.homeLogo)+'" loading="lazy" onerror="this.style.display=\'none\'">':'<div class="mc-logo-ph"></div>';
   var aL=m.awayLogo?'<img class="mc-logo" src="'+escHtml(m.awayLogo)+'" loading="lazy" onerror="this.style.display=\'none\'">':'<div class="mc-logo-ph"></div>';
   var comp=m.competition?'<div class="mc-comp">'+escHtml(m.competition)+'</div>':'';
-  return '<div class="match-card"><div class="mc-row"><div class="mc-time'+(isLive?' mc-live':'')+'">'+escHtml(timeStr)+'</div><div class="mc-teams"><div class="mc-team">'+hL+'<span class="mc-name">'+escHtml(m.homeTeam||'TBA')+'</span></div><div class="mc-team">'+aL+'<span class="mc-name">'+escHtml(m.awayTeam||'TBA')+'</span></div></div>'+score+'</div>'+comp+'</div>';
+  var clickable=(isDone||isLive)?'onclick="openMatchPanel(\''+escHtml(String(m.id))+'\',\''+escHtml(m.homeTeam||'').replace(/'/g,'\\\'').replace(/"/g,'&quot;')+'\',\''+escHtml(m.awayTeam||'').replace(/'/g,'\\\'').replace(/"/g,'&quot;')+'\',\''+scoreVal+'\')" style="cursor:pointer"':'';
+  var indicator=(isDone||isLive)?'<span style="font-size:.38rem;color:var(--t4);float:right">&#x276F;</span>':'';
+  return '<div class="match-card" '+clickable+'><div class="mc-row"><div class="mc-time'+(isLive?' mc-live':'')+'">'+escHtml(timeStr)+'</div><div class="mc-teams"><div class="mc-team">'+hL+'<span class="mc-name">'+escHtml(m.homeTeam||'TBA')+'</span></div><div class="mc-team">'+aL+'<span class="mc-name">'+escHtml(m.awayTeam||'TBA')+'</span></div></div>'+score+indicator+'</div>'+comp+'</div>';
 }
 
 /* ── STANDINGS ── */
@@ -1166,6 +1232,402 @@ window.addEventListener('load',function(){
 });
 
 
+
+
+
+/* ── HOME FILTER ── */
+var _homeFilter = 'all';
+var _cachedFixtures = null;
+function setHomeFilter(filter, btn) {
+  _homeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(function(b) {
+    b.style.background = 'var(--bg3)';
+    b.style.color = 'var(--t3)';
+    b.style.border = '1px solid var(--bd)';
+  });
+  if (btn) {
+    btn.style.background = filter === 'live' ? '#ff3b3b' : 'var(--gold)';
+    btn.style.color = '#000';
+    btn.style.border = 'none';
+  }
+  if (_cachedFixtures) {
+    renderHomeFiltered(_cachedFixtures);
+  } else {
+    homeLoad();
+  }
+}
+
+function renderHomeFiltered(data) {
+  var el = document.getElementById('home-matches');
+  if (!el) return;
+  var g = data.groups || {};
+  var matches = [];
+  if (_homeFilter === 'all') {
+    matches = [
+      ...(g.live||[]),
+      ...(g.today||[]),
+      ...(g.upcoming||[]),
+      ...(g.results||[]),
+    ];
+  } else {
+    matches = g[_homeFilter] || [];
+  }
+  if (!matches.length) {
+    el.innerHTML = '<div class="loading-center" style="flex-direction:column;gap:.4rem;padding:2rem">'
+      + '<div style="font-size:1.5rem">&#x26BD;</div>'
+      + '<div style="font-size:.6rem;color:var(--t2)">No '
+      + escHtml(_homeFilter === 'all' ? 'matches' : _homeFilter + ' matches')
+      + ' available</div>'
+      + '<div style="font-size:.5rem;color:var(--t3)">Try a different filter or competition</div></div>';
+    return;
+  }
+  /* Show by section */
+  renderHome(data, el);
+}
+
+/* ── LOGOUT ── */
+function logOut() {
+  if (!confirm('Sign out of CopaAmerica?')) return;
+  piUser = null;
+  isCopaPass = false;
+  localStorage.removeItem('ca_user');
+  var app   = document.getElementById('app');
+  var login = document.getElementById('login');
+  if (app)   app.style.display   = 'none';
+  if (login) login.style.display = 'flex';
+  var btn  = document.getElementById('loginBtn');
+  var txt  = document.getElementById('signin-txt');
+  var lmsg = document.getElementById('lmsg');
+  if (btn)  { btn.disabled = false; btn.style.opacity = '1'; }
+  if (txt)  txt.textContent = 'Sign In with Pi';
+  if (lmsg) lmsg.textContent = '';
+  toast('Signed out successfully');
+}
+
+/* ══════════════════════════════════════
+   MATCH DETAIL PANEL
+══════════════════════════════════════ */
+var _mpData = null;
+var _mpTab  = 0;
+
+function openMatchPanel(matchId, homeTeam, awayTeam, score) {
+  var panel = document.getElementById('match-panel');
+  var title = document.getElementById('mp-title');
+  var body  = document.getElementById('mp-body');
+  if (!panel) return;
+
+  _mpData = null; _mpTab = 0;
+  panel.style.display = 'flex';
+  if (title) title.textContent = (homeTeam || '') + ' vs ' + (awayTeam || '');
+
+  /* Reset tabs */
+  for (var i = 0; i < 4; i++) {
+    var t = document.getElementById('mp-tab-'+i);
+    if (t) {
+      t.style.color = i === 0 ? 'var(--gold)' : 'var(--t3)';
+      t.style.borderBottom = i === 0 ? '2px solid var(--gold)' : '2px solid transparent';
+    }
+  }
+
+  body.innerHTML = '<div class="loading-center"><div class="spin"></div>'
+    + '<div style="margin-top:.4rem;font-size:.55rem;color:var(--t3)">Loading match data...</div></div>';
+
+  fetch('/data?type=match&match=' + encodeURIComponent(matchId))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      _mpData = data;
+      mpShowTab(0);
+    })
+    .catch(function(err) {
+      body.innerHTML = '<div class="loading-center" style="flex-direction:column;gap:.5rem;padding:2rem">'
+        + '<div style="font-size:.6rem;color:var(--t3)">Match data unavailable</div>'
+        + '<div style="font-size:.5rem;color:var(--t4)">Data may not be available yet</div>'
+        + renderOverviewFallback(homeTeam, awayTeam, score) + '</div>';
+    });
+}
+
+function renderOverviewFallback(home, away, score) {
+  return '<div style="margin-top:1rem;background:var(--bg2);border-radius:12px;padding:.85rem;'
+    + 'border:1px solid var(--bd);text-align:center">'
+    + '<div style="font-family:var(--df);font-size:.72rem;font-weight:700;color:var(--t1)">'
+    + escHtml(home||'') + '</div>'
+    + (score ? '<div style="font-family:var(--df);font-size:1.6rem;font-weight:900;color:var(--gold);margin:.3rem 0">'+escHtml(score)+'</div>' : '<div style="margin:.3rem 0;color:var(--t4)">vs</div>')
+    + '<div style="font-family:var(--df);font-size:.72rem;font-weight:700;color:var(--t1)">'
+    + escHtml(away||'') + '</div></div>';
+}
+
+function closeMatchPanel() {
+  var panel = document.getElementById('match-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+function mpShowTab(idx) {
+  _mpTab = idx;
+  /* Update tab styles */
+  for (var i = 0; i < 4; i++) {
+    var t = document.getElementById('mp-tab-'+i);
+    if (t) {
+      t.style.color = i === idx ? 'var(--gold)' : 'var(--t3)';
+      t.style.borderBottom = i === idx ? '2px solid var(--gold)' : '2px solid transparent';
+    }
+  }
+  var body = document.getElementById('mp-body');
+  if (!body) return;
+  if (!_mpData) { body.innerHTML = '<div class="loading-center"><div class="spin"></div></div>'; return; }
+
+  switch(idx) {
+    case 0: body.innerHTML = renderOverview(_mpData);  break;
+    case 1: body.innerHTML = renderLineup(_mpData);    break;
+    case 2: body.innerHTML = renderStats(_mpData);     break;
+    case 3: body.innerHTML = renderEvents(_mpData);    break;
+  }
+}
+
+/* ── OVERVIEW ── */
+function renderOverview(d) {
+  var m = d.match || {};
+  var home = m.homeTeam || d.raw?.homeTeam || 'Home';
+  var away = m.awayTeam || d.raw?.awayTeam || 'Away';
+  var hs   = m.homeScore !== null && m.homeScore !== undefined ? m.homeScore : '-';
+  var as   = m.awayScore !== null && m.awayScore !== undefined ? m.awayScore : '-';
+  var html = '<div style="padding:.6rem .75rem">';
+
+  /* Score card */
+  html += '<div style="background:linear-gradient(135deg,#141200,#1a1700);border:1px solid var(--gold);'
+    + 'border-radius:14px;padding:1rem;margin-bottom:.7rem;text-align:center">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">'
+    + '<div style="flex:1;text-align:center">'
+    + (m.homeLogo ? '<img src="'+escHtml(m.homeLogo)+'" style="width:36px;height:36px;object-fit:contain;margin-bottom:.3rem" onerror="this.style.display=\'none\'"><br>' : '')
+    + '<div style="font-family:var(--dm);font-size:.7rem;font-weight:800;color:var(--t1)">'+escHtml(home)+'</div>'
+    + '</div>'
+    + '<div style="text-align:center;flex-shrink:0">'
+    + '<div style="font-family:var(--df);font-size:2.2rem;font-weight:900;color:var(--gold)">'+hs+'<span style="color:var(--t3);font-size:1.4rem;margin:0 .15rem">-</span>'+as+'</div>'
+    + '<div style="font-size:.44rem;color:var(--t3)">' + escHtml(m.status||'') + '</div>'
+    + '</div>'
+    + '<div style="flex:1;text-align:center">'
+    + (m.awayLogo ? '<img src="'+escHtml(m.awayLogo)+'" style="width:36px;height:36px;object-fit:contain;margin-bottom:.3rem" onerror="this.style.display=\'none\'"><br>' : '')
+    + '<div style="font-family:var(--dm);font-size:.7rem;font-weight:800;color:var(--t1)">'+escHtml(away)+'</div>'
+    + '</div></div>'
+    + (m.venue ? '<div style="font-size:.44rem;color:var(--t3);margin-top:.4rem">&#x1F3DF; '+escHtml(m.venue)+'</div>' : '')
+    + '</div>';
+
+  /* Goals list */
+  if (d.goals && d.goals.length) {
+    html += '<div style="background:var(--bg2);border-radius:10px;padding:.7rem;margin-bottom:.5rem;border:1px solid var(--bd)">'
+      + '<div style="font-size:.5rem;color:var(--t3);font-weight:700;letter-spacing:.08em;margin-bottom:.4rem">GOALS</div>';
+    d.goals.forEach(function(g) {
+      var isHome = (g.team === home);
+      html += '<div style="display:flex;align-items:center;padding:.2rem 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+        + (isHome ? '<div style="flex:1;font-size:.6rem;color:var(--t1)">'+escHtml(g.scorer||'')+(g.assist?' <span style="color:var(--t3)">('+escHtml(g.assist)+')</span>':'')+'</div>' : '<div style="flex:1"></div>')
+        + '<div style="font-size:.55rem;color:var(--gold);font-weight:700;padding:0 .4rem">'+g.minute+"'</div>"
+        + (!isHome ? '<div style="flex:1;font-size:.6rem;color:var(--t1);text-align:right">'+escHtml(g.scorer||'')+(g.assist?' <span style="color:var(--t3)">('+escHtml(g.assist)+')</span>':'')+'</div>' : '<div style="flex:1"></div>')
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  /* Bookings */
+  if (d.bookings && d.bookings.length) {
+    html += '<div style="background:var(--bg2);border-radius:10px;padding:.7rem;border:1px solid var(--bd)">'
+      + '<div style="font-size:.5rem;color:var(--t3);font-weight:700;letter-spacing:.08em;margin-bottom:.4rem">CARDS</div>';
+    d.bookings.forEach(function(b) {
+      var col = b.card === 'RED_CARD' ? '#ff3b3b' : '#ffb800';
+      var sym = b.card === 'RED_CARD' ? '&#x1F7E5;' : '&#x1F7E8;';
+      html += '<div style="display:flex;align-items:center;gap:.4rem;padding:.2rem 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+        + '<span style="font-size:.7rem">'+sym+'</span>'
+        + '<span style="font-size:.6rem;color:var(--t1);flex:1">'+escHtml(b.player||'')+'</span>'
+        + '<span style="font-size:.55rem;color:var(--t3)">'+escHtml(b.team||'')+'</span>'
+        + '<span style="font-size:.55rem;color:var(--gold);font-weight:700">'+b.minute+"'</span>"
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+/* ── LINEUP ── */
+function renderLineup(d) {
+  if (!d.lineup || !d.lineup.length) {
+    /* Try ESPN rosters */
+    if (d.rosters && d.rosters.length) {
+      return renderESPNLineup(d.rosters, d.raw);
+    }
+    return '<div class="loading-center" style="padding:2rem;flex-direction:column;gap:.4rem">'
+      + '<div style="font-size:.6rem;color:var(--t3)">Lineup not available yet</div>'
+      + '<div style="font-size:.5rem;color:var(--t4)">Lineups are published 1 hour before kick-off</div></div>';
+  }
+
+  var html = '<div style="padding:.5rem">';
+  d.lineup.forEach(function(team) {
+    html += '<div style="background:var(--bg2);border-radius:12px;padding:.75rem;margin-bottom:.5rem;border:1px solid var(--bd)">'
+      + '<div style="font-family:var(--dm);font-size:.68rem;font-weight:800;color:var(--gold);margin-bottom:.15rem">'+escHtml(team.team?.name||'')+'</div>'
+      + (team.formation ? '<div style="font-size:.5rem;color:var(--t3);margin-bottom:.5rem">Formation: '+escHtml(team.formation)+'</div>' : '')
+      + '<div style="font-size:.5rem;color:var(--t3);font-weight:700;letter-spacing:.06em;margin-bottom:.3rem">STARTING XI</div>';
+    (team.startXI || []).forEach(function(p) {
+      html += '<div style="display:flex;align-items:center;gap:.4rem;padding:.22rem 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+        + '<span style="font-size:.58rem;color:var(--gold);font-weight:700;width:20px">'+escHtml(String(p.shirtNumber||''))+'</span>'
+        + '<span style="font-size:.6rem;color:var(--t1);flex:1">'+escHtml(p.player?.name||'')+'</span>'
+        + '<span style="font-size:.5rem;color:var(--t3)">'+escHtml(p.position||'')+'</span>'
+        + '</div>';
+    });
+    if ((team.bench||[]).length) {
+      html += '<div style="font-size:.5rem;color:var(--t3);font-weight:700;letter-spacing:.06em;margin:.5rem 0 .3rem">SUBSTITUTES</div>';
+      (team.bench||[]).forEach(function(p) {
+        html += '<div style="display:flex;align-items:center;gap:.4rem;padding:.18rem 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+          + '<span style="font-size:.58rem;color:var(--t3);width:20px">'+escHtml(String(p.shirtNumber||''))+'</span>'
+          + '<span style="font-size:.58rem;color:var(--t2);flex:1">'+escHtml(p.player?.name||'')+'</span>'
+          + '<span style="font-size:.5rem;color:var(--t3)">'+escHtml(p.position||'')+'</span>'
+          + '</div>';
+      });
+    }
+    if (team.coach?.name) {
+      html += '<div style="font-size:.5rem;color:var(--t3);margin-top:.4rem">Coach: <span style="color:var(--t2)">'+escHtml(team.coach.name)+'</span></div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderESPNLineup(rosters, raw) {
+  var html = '<div style="padding:.5rem">';
+  rosters.forEach(function(team) {
+    html += '<div style="background:var(--bg2);border-radius:12px;padding:.75rem;margin-bottom:.5rem;border:1px solid var(--bd)">'
+      + '<div style="font-family:var(--dm);font-size:.68rem;font-weight:800;color:var(--gold);margin-bottom:.4rem">'+escHtml(team.team?.displayName||'')+'</div>';
+    var starters = (team.athletes||[]).filter(function(a){ return a.starter; });
+    var bench    = (team.athletes||[]).filter(function(a){ return !a.starter; });
+    if (starters.length) {
+      html += '<div style="font-size:.5rem;color:var(--t3);font-weight:700;letter-spacing:.06em;margin-bottom:.3rem">STARTING XI</div>';
+      starters.forEach(function(a) {
+        html += '<div style="display:flex;align-items:center;gap:.4rem;padding:.22rem 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+          + '<span style="font-size:.58rem;color:var(--gold);font-weight:700;width:20px">'+escHtml(String(a.jersey||''))+'</span>'
+          + '<span style="font-size:.6rem;color:var(--t1);flex:1">'+escHtml(a.athlete?.displayName||a.displayName||'')+'</span>'
+          + '<span style="font-size:.5rem;color:var(--t3)">'+escHtml(a.position?.abbreviation||a.position?.displayName||'')+'</span>'
+          + '</div>';
+      });
+    }
+    if (bench.length) {
+      html += '<div style="font-size:.5rem;color:var(--t3);font-weight:700;letter-spacing:.06em;margin:.5rem 0 .3rem">SUBSTITUTES</div>';
+      bench.slice(0,7).forEach(function(a) {
+        html += '<div style="display:flex;align-items:center;gap:.4rem;padding:.18rem 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+          + '<span style="font-size:.58rem;color:var(--t3);width:20px">'+escHtml(String(a.jersey||''))+'</span>'
+          + '<span style="font-size:.58rem;color:var(--t2);flex:1">'+escHtml(a.athlete?.displayName||a.displayName||'')+'</span>'
+          + '<span style="font-size:.5rem;color:var(--t3)">'+escHtml(a.position?.abbreviation||'')+'</span>'
+          + '</div>';
+      });
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ── STATS ── */
+function renderStats(d) {
+  /* Try to extract from ESPN plays or FD data */
+  var stats = d.stats || [];
+  if (!stats.length && d.plays) {
+    /* Build basic stats from plays */
+    var shots=0, goals=0, cards=0, corners=0;
+    (d.plays||[]).forEach(function(p){
+      var t = (p.type?.text||'').toLowerCase();
+      if(t.includes('goal')) goals++;
+      if(t.includes('shot')) shots++;
+      if(t.includes('card')) cards++;
+      if(t.includes('corner')) corners++;
+    });
+    if (shots||goals||cards||corners) {
+      stats = [
+        {name:'Goals',    home:goals,  away:0},
+        {name:'Shots',    home:shots,  away:0},
+        {name:'Cards',    home:cards,  away:0},
+        {name:'Corners',  home:corners,away:0},
+      ];
+    }
+  }
+
+  if (!stats.length) {
+    return '<div class="loading-center" style="padding:2rem;flex-direction:column;gap:.4rem">'
+      + '<div style="font-size:.6rem;color:var(--t3)">Match statistics unavailable</div>'
+      + '<div style="font-size:.5rem;color:var(--t4)">Stats are updated during and after the match</div></div>';
+  }
+
+  var html = '<div style="padding:.6rem .75rem">';
+  stats.forEach(function(s) {
+    var total = (s.home||0) + (s.away||0);
+    var homePct = total ? Math.round((s.home||0)/total*100) : 50;
+    html += '<div style="margin-bottom:.65rem">'
+      + '<div style="display:flex;justify-content:space-between;font-size:.58rem;margin-bottom:.2rem">'
+      + '<span style="font-weight:700;color:var(--t1)">'+escHtml(String(s.home||0))+'</span>'
+      + '<span style="color:var(--t3)">'+escHtml(s.name||'')+'</span>'
+      + '<span style="font-weight:700;color:var(--t1)">'+escHtml(String(s.away||0))+'</span>'
+      + '</div>'
+      + '<div style="display:flex;height:4px;border-radius:2px;overflow:hidden;background:var(--bg3)">'
+      + '<div style="width:'+homePct+'%;background:var(--gold);transition:width .4s"></div>'
+      + '<div style="flex:1;background:rgba(255,255,255,.15)"></div>'
+      + '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ── EVENTS / TIMELINE ── */
+function renderEvents(d) {
+  var events = [];
+
+  /* football-data.org events */
+  if (d.goals && d.goals.length) {
+    d.goals.forEach(function(g) {
+      events.push({ minute:g.minute, type:'GOAL', player:g.scorer, team:g.team, assist:g.assist });
+    });
+  }
+  if (d.bookings && d.bookings.length) {
+    d.bookings.forEach(function(b) {
+      events.push({ minute:b.minute, type:b.card||'YELLOW', player:b.player, team:b.team });
+    });
+  }
+  if (d.subs && d.subs.length) {
+    d.subs.forEach(function(s) {
+      events.push({ minute:s.minute, type:'SUB', playerIn:s.playerIn, playerOut:s.playerOut, team:s.team });
+    });
+  }
+
+  /* ESPN plays */
+  if (!events.length && d.plays && d.plays.length) {
+    d.plays.filter(function(p){ return p.type?.text; }).slice(0,30).forEach(function(p) {
+      events.push({ minute: p.clock?.displayValue||'', type: p.type?.text||'Event', player: p.athletesInvolved?.[0]?.displayName||'', team:'' });
+    });
+  }
+
+  if (!events.length) {
+    return '<div class="loading-center" style="padding:2rem;flex-direction:column;gap:.4rem">'
+      + '<div style="font-size:.6rem;color:var(--t3)">Match events unavailable</div>'
+      + '<div style="font-size:.5rem;color:var(--t4)">Events appear during live matches</div></div>';
+  }
+
+  /* Sort by minute */
+  events.sort(function(a,b){ return parseInt(a.minute||0)-parseInt(b.minute||0); });
+
+  var html = '<div style="padding:.6rem .75rem">';
+  events.forEach(function(e) {
+    var icon = e.type==='GOAL'?'&#x26BD;':e.type==='RED_CARD'?'&#x1F7E5;':e.type==='YELLOW_CARD'?'&#x1F7E8;':e.type==='SUB'?'&#x21C6;':'&#x25AA;';
+    html += '<div style="display:flex;align-items:flex-start;gap:.5rem;padding:.35rem 0;'
+      + 'border-bottom:1px solid rgba(255,255,255,.05)">'
+      + '<span style="font-size:.75rem;flex-shrink:0">'+icon+'</span>'
+      + '<div style="flex:1;min-width:0">'
+      + (e.player ? '<div style="font-size:.62rem;font-weight:700;color:var(--t1)">'+escHtml(e.player)+'</div>' : '')
+      + (e.playerIn ? '<div style="font-size:.6rem;color:var(--t1)">In: '+escHtml(e.playerIn)+' / Out: '+escHtml(e.playerOut||'')+'</div>' : '')
+      + (e.assist ? '<div style="font-size:.54rem;color:var(--t3)">Assist: '+escHtml(e.assist)+'</div>' : '')
+      + '<div style="font-size:.52rem;color:var(--t3)">'+escHtml(e.team||e.type||'')+'</div>'
+      + '</div>'
+      + (e.minute ? '<span style="font-size:.6rem;color:var(--gold);font-weight:700;flex-shrink:0">'+escHtml(String(e.minute))+"'</span>" : '')
+      + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
 
 </script>
 </body>
