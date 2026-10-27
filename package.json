@@ -1,1 +1,11 @@
-{ "name": "copa-america", "version": "1.0.0", "private": true }
+{
+  "name": "copaamerica-pi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CopaAmerica \u2014 Every Kick. Every Goal. Live. (Pi Network PWA on Cloudflare Pages)",
+  "scripts": {
+    "test:fd": "MOCK=fd node test/serve.mjs 8787",
+    "test:af": "MOCK=af node test/serve.mjs 8788"
+  }
+}
