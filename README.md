@@ -1,6 +1,6 @@
 # CopaAmerica — Every Kick. Every Goal. Live.
 
-App name: **CopaAmerica** · Domain: **copaamerica.pi** · Cloudflare Pages: **copa-america.pages.dev** · Support: support.copaamerica.pi@gmail.com
+App name: **CopaAmerica** · Domain: **copaamerica.pi** · Cloudflare Pages: **copaamerica.pages.dev** · Support: support.copaamerica.pi@gmail.com
 
 Football-only Pi Network PWA: live scores, fixtures and results, match centre, league tables, team pages,
 search and follows, Pi sign-in and Pi support payments. The Americas come first; every competition the
